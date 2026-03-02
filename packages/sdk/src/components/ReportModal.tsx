@@ -9,6 +9,8 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
+  Platform,
+  StatusBar,
 } from 'react-native';
 import { createClient } from '@supabase/supabase-js';
 import { useBugReporter } from '../hooks/useBugReporter';
@@ -97,8 +99,9 @@ export function ReportModal() {
   }, [description, category, severity, screenshotUri, config, translations, closeModal]);
 
   return (
-    <Modal visible={isModalVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={closeModal}>
+    <Modal visible={isModalVisible} animationType="slide" presentationStyle="fullScreen" onRequestClose={closeModal}>
       <View style={styles.container}>
+        <View style={styles.safeTop} />
         <View style={styles.header}>
           <TouchableOpacity onPress={closeModal} disabled={isSubmitting}>
             <Text style={styles.cancelText}>{translations.cancel}</Text>
@@ -189,6 +192,10 @@ export function ReportModal() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
+  },
+  safeTop: {
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight ?? 44 : 54,
     backgroundColor: '#fff',
   },
   header: {

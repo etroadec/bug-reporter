@@ -16,7 +16,7 @@ export function FloatingButton({ onPress }: Props) {
 const styles = StyleSheet.create({
   button: {
     position: 'absolute',
-    bottom: 40,
+    bottom: 100,
     right: 20,
     width: 56,
     height: 56,
