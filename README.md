@@ -2,7 +2,7 @@
 
 Solution complète de bug reporting in-app pour React Native/Expo.
 
-- **SDK** (`@etroadec/bug-reporter-sdk`) — Shake to report, capture d'écran automatique, formulaire intégré, métadonnées device/app/network
+- **SDK** (`@mindedsolutions/bug-reporter-sdk`) — Shake to report, capture d'écran automatique, formulaire intégré, métadonnées device/app/network
 - **Admin** — Backoffice Next.js pour visualiser et gérer les bugs
 - **Supabase** — Base de données, stockage screenshots, authentification
 
@@ -55,11 +55,11 @@ Déployer sur Vercel : connecter le repo, root directory `apps/admin`, ajouter l
 ### 3. SDK
 
 ```bash
-npm install @etroadec/bug-reporter-sdk
+npm install @mindedsolutions/bug-reporter-sdk
 ```
 
 ```tsx
-import { BugReporterProvider } from '@etroadec/bug-reporter-sdk';
+import { BugReporterProvider } from '@mindedsolutions/bug-reporter-sdk';
 
 export default function App() {
   return (
@@ -118,7 +118,7 @@ const { openModal, closeModal, isModalVisible } = useBugReporter();
 Bouton flottant standalone si `floatingButton: false` dans la config :
 
 ```tsx
-import { FloatingButton } from '@etroadec/bug-reporter-sdk';
+import { FloatingButton } from '@mindedsolutions/bug-reporter-sdk';
 ```
 
 ## Développement

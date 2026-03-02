@@ -1,5 +1,5 @@
 {
-  "name": "@etroadec/bug-reporter-sdk",
+  "name": "@mindedsolutions/bug-reporter-sdk",
   "version": "0.1.0",
   "description": "In-app bug reporting SDK for React Native/Expo with shake detection, screenshot capture, and Supabase integration",
   "main": "dist/index.js",
