@@ -2,7 +2,6 @@ import { createSupabaseClient } from '@/lib/supabase';
 import { FeatureRequestList } from '@/components/FeatureRequestList';
 import { BoardFilters } from '@/components/BoardFilters';
 import Link from 'next/link';
-import { Suspense } from 'react';
 
 export default async function BoardPage({
   params,
@@ -29,25 +28,31 @@ export default async function BoardPage({
   }
 
   const { data: features } = await query;
+  const count = (features ?? []).length;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Feature Requests</h1>
-          <p className="mt-1 text-sm text-gray-500">{(features ?? []).length} requests</p>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="text-center">
+        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100">
+          <span className="text-2xl">💡</span>
         </div>
-        <div className="flex items-center gap-3">
-          <Suspense>
-            <BoardFilters projectId={projectId} />
-          </Suspense>
-          <Link
-            href={`/${projectId}/submit`}
-            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-          >
-            Suggest a Feature
-          </Link>
-        </div>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Suggestions</h1>
+        <p className="mt-1 text-sm text-gray-500">
+          {count === 0 ? 'Aucune suggestion pour le moment' : `${count} suggestion${count > 1 ? 's' : ''}`}
+        </p>
+      </div>
+
+      {/* Actions */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <BoardFilters projectId={projectId} />
+        <Link
+          href={`/${projectId}/submit`}
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-indigo-700 hover:shadow active:scale-[0.98]"
+        >
+          <span>+</span>
+          Proposer une idee
+        </Link>
       </div>
 
       <FeatureRequestList features={features ?? []} />

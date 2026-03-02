@@ -55,14 +55,16 @@ export function VoteButton({ featureId, voteCount }: { featureId: string; voteCo
       onClick={handleVote}
       disabled={loading}
       className={cn(
-        'flex flex-col items-center rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
+        'flex flex-col items-center justify-center rounded-xl border px-3.5 py-2.5 text-sm font-semibold transition-all',
         hasVoted
-          ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
-          : 'border-gray-200 bg-white text-gray-500 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600',
+          ? 'border-indigo-200 bg-indigo-50 text-indigo-600 shadow-sm'
+          : 'border-gray-200 bg-white text-gray-400 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-500',
         loading && 'opacity-50'
       )}
     >
-      <span className="text-lg">{hasVoted ? '▲' : '△'}</span>
+      <svg width="16" height="10" viewBox="0 0 16 10" fill="none" className={cn('mb-0.5 transition-colors', hasVoted ? 'text-indigo-600' : 'text-current')}>
+        <path d="M8 0L15 9H1L8 0Z" fill="currentColor" />
+      </svg>
       <span>{voteCount}</span>
     </button>
   );

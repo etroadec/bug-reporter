@@ -5,7 +5,14 @@ import { useRouter } from 'next/navigation';
 import { createSupabaseClient } from '@/lib/supabase';
 import { getVoterId } from '@/lib/voter';
 
-const CATEGORIES = ['UI/UX', 'Performance', 'New Feature', 'Integration', 'Improvement', 'Other'];
+const CATEGORIES = [
+  { value: 'New Feature', label: 'Nouveaute' },
+  { value: 'UI/UX', label: 'UI/UX' },
+  { value: 'Performance', label: 'Performance' },
+  { value: 'Integration', label: 'Integration' },
+  { value: 'Improvement', label: 'Amelioration' },
+  { value: 'Other', label: 'Autre' },
+];
 
 export function SubmitForm({ projectId }: { projectId: string }) {
   const router = useRouter();
@@ -34,7 +41,7 @@ export function SubmitForm({ projectId }: { projectId: string }) {
     });
 
     if (insertError) {
-      setError('Failed to submit. Please try again.');
+      setError('Erreur lors de la soumission. Veuillez reessayer.');
       setSubmitting(false);
       return;
     }
@@ -44,20 +51,20 @@ export function SubmitForm({ projectId }: { projectId: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-5">
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-          Title
+          Titre
         </label>
         <input
           id="title"
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Brief summary of your idea..."
+          placeholder="Resume de votre idee..."
           required
           maxLength={200}
-          className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="mt-1.5 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm shadow-sm transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100"
         />
       </div>
 
@@ -69,50 +76,54 @@ export function SubmitForm({ projectId }: { projectId: string }) {
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Describe your feature request in detail..."
+          placeholder="Decrivez votre suggestion en detail..."
           required
           maxLength={5000}
           rows={5}
-          className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="mt-1.5 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm shadow-sm transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+        <label className="mb-2 block text-sm font-medium text-gray-700">Categorie</label>
         <div className="flex flex-wrap gap-2">
           {CATEGORIES.map((cat) => (
             <button
-              key={cat}
+              key={cat.value}
               type="button"
-              onClick={() => setCategory(cat)}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-                category === cat
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              onClick={() => setCategory(cat.value)}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
+                category === cat.value
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'bg-gray-50 text-gray-600 ring-1 ring-inset ring-gray-200 hover:bg-gray-100'
               }`}
             >
-              {cat}
+              {cat.label}
             </button>
           ))}
         </div>
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && (
+        <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
 
-      <div className="flex gap-3">
+      <div className="flex gap-3 pt-2">
         <button
           type="submit"
           disabled={submitting || !title.trim() || !description.trim()}
-          className="rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+          className="rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-indigo-700 hover:shadow active:scale-[0.98] disabled:opacity-50"
         >
-          {submitting ? 'Submitting...' : 'Submit Feature Request'}
+          {submitting ? 'Envoi en cours...' : 'Envoyer la suggestion'}
         </button>
         <button
           type="button"
           onClick={() => router.push(`/${projectId}`)}
-          className="rounded-lg border border-gray-300 px-6 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="rounded-xl border border-gray-200 px-6 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
         >
-          Cancel
+          Annuler
         </button>
       </div>
     </form>

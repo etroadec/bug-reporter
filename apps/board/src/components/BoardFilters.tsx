@@ -4,15 +4,14 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 
 const STATUSES = ['all', 'under_review', 'planned', 'in_progress', 'completed', 'declined'];
-const SORT_OPTIONS = ['votes', 'newest'];
 
 const STATUS_LABELS: Record<string, string> = {
-  all: 'All Statuses',
-  under_review: 'Under Review',
-  planned: 'Planned',
-  in_progress: 'In Progress',
-  completed: 'Completed',
-  declined: 'Declined',
+  all: 'Tous les statuts',
+  under_review: 'En cours d\'examen',
+  planned: 'Planifie',
+  in_progress: 'En cours',
+  completed: 'Termine',
+  declined: 'Decline',
 };
 
 export function BoardFilters({ projectId }: { projectId: string }) {
@@ -30,7 +29,6 @@ export function BoardFilters({ projectId }: { projectId: string }) {
       } else {
         params.set(key, value);
       }
-      // Preserve voter_id if present
       const voterId = searchParams.get('voter_id');
       if (voterId) params.set('voter_id', voterId);
       router.push(`/${projectId}?${params.toString()}`);
@@ -39,11 +37,11 @@ export function BoardFilters({ projectId }: { projectId: string }) {
   );
 
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="flex flex-wrap gap-2">
       <select
         value={currentStatus}
         onChange={(e) => updateFilter('status', e.target.value)}
-        className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+        className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100"
       >
         {STATUSES.map((s) => (
           <option key={s} value={s}>{STATUS_LABELS[s]}</option>
@@ -52,10 +50,10 @@ export function BoardFilters({ projectId }: { projectId: string }) {
       <select
         value={currentSort}
         onChange={(e) => updateFilter('sort', e.target.value)}
-        className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+        className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100"
       >
-        <option value="votes">Most Voted</option>
-        <option value="newest">Newest</option>
+        <option value="votes">Plus votes</option>
+        <option value="newest">Plus recents</option>
       </select>
     </div>
   );
