@@ -6,9 +6,20 @@ import { SCREENSHOT_QUALITY, SCREENSHOT_FORMAT } from '../constants';
 
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+  // Count padding from the original string before stripping
+  let padding = 0;
+  if (base64.endsWith('==')) padding = 2;
+  else if (base64.endsWith('=')) padding = 1;
+
+  // Remove all non-base64 characters (including '=' padding)
   const clean = base64.replace(/[^A-Za-z0-9+/]/g, '');
   const len = clean.length;
-  const byteLen = (len * 3) / 4 - (base64.endsWith('==') ? 2 : base64.endsWith('=') ? 1 : 0);
+
+  // The byte length formula requires the padded base64 length (multiple of 4).
+  // Since clean has '=' stripped, we add padding back for the calculation.
+  const paddedLen = len + padding;
+  const byteLen = (paddedLen * 3) / 4 - padding;
   const buffer = new ArrayBuffer(byteLen);
   const bytes = new Uint8Array(buffer);
 

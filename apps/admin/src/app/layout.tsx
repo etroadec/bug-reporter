@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'BugnFeat Reporter \u2014 Admin',
-  description: 'Admin dashboard for BugnFeat Reporter',
+  title: 'Bug Reporter \u2014 Admin',
+  description: 'Admin dashboard for Bug Reporter',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -13,7 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className="border-b border-gray-200 bg-white">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
             <div className="flex items-center gap-8">
-              <h1 className="text-lg font-bold text-indigo-600">BugnFeat Reporter</h1>
+              <h1 className="text-lg font-bold text-indigo-600">Bug Reporter</h1>
               <nav className="flex items-center gap-4">
                 <a href="/" className="text-sm font-medium text-gray-600 hover:text-indigo-600">Bugs</a>
                 <a href="/features" className="text-sm font-medium text-gray-600 hover:text-indigo-600">Features</a>

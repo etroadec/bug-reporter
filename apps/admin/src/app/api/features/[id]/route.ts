@@ -12,15 +12,14 @@ export async function PATCH(
   // Whitelist allowed fields to prevent arbitrary column updates
   const update: Record<string, unknown> = {};
   if (body.status !== undefined) update.status = body.status;
-  if (body.notes !== undefined) update.notes = body.notes;
-  if (body.assigned_to !== undefined) update.assigned_to = body.assigned_to;
+  if (body.admin_response !== undefined) update.admin_response = body.admin_response;
 
   if (Object.keys(update).length === 0) {
     return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 });
   }
 
   const { error } = await supabase
-    .from('bug_reports')
+    .from('feature_requests')
     .update(update)
     .eq('id', id);
 

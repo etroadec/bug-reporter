@@ -18,4 +18,6 @@ export const en: Translations = {
   severityMedium: 'Medium',
   severityHigh: 'High',
   severityCritical: 'Critical',
+  featureBoard: 'Feature Board',
+  suggestFeature: 'Suggest a Feature',
 };

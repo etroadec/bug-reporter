@@ -27,6 +27,20 @@ export type BugReport = {
   updated_at: string;
 };
 
+export type FeatureRequest = {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  status: string;
+  vote_count: number;
+  project_id: string;
+  submitted_by: string | null;
+  admin_response: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 // Server-side client using service_role key — bypasses RLS
 // Safe because it only runs in server components / API routes (never sent to browser)
 export function createSupabaseAdmin() {

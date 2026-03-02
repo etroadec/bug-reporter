@@ -1,6 +1,8 @@
 export { BugReporterProvider } from './context/BugReporterProvider';
 export { useBugReporter } from './hooks/useBugReporter';
+export { useFeatureBoard } from './hooks/useFeatureBoard';
 export { FloatingButton } from './components/FloatingButton';
+export { FeatureBoardLink } from './components/FeatureBoardLink';
 export type {
   BugReporterConfig,
   BugReportPayload,
@@ -12,4 +14,7 @@ export type {
   AppInfo,
   NetworkInfo,
   Translations,
+  FeatureCategory,
+  FeatureStatus,
+  FeatureBoardConfig,
 } from './types';

@@ -1,4 +1,4 @@
--- BugnFeat Reporter — Feature Requests Schema
+-- Bug Reporter — Feature Requests Schema
 -- Creates feature_requests and feature_votes tables, triggers, indexes, and RLS policies
 
 -- =============================================================================

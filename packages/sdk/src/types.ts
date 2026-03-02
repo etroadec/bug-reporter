@@ -3,6 +3,13 @@ export type BugSeverity = 'low' | 'medium' | 'high' | 'critical';
 export type BugStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
 export type SupportedLocale = 'en' | 'fr';
 
+export type FeatureCategory = 'UI/UX' | 'Performance' | 'New Feature' | 'Integration' | 'Improvement' | 'Other';
+export type FeatureStatus = 'under_review' | 'planned' | 'in_progress' | 'completed' | 'declined';
+
+export interface FeatureBoardConfig {
+  boardBaseUrl: string;
+}
+
 export interface DeviceInfo {
   brand: string | null;
   model: string | null;
@@ -56,6 +63,7 @@ export interface BugReporterConfig {
   currentScreen?: string;
   userId?: string;
   customData?: Record<string, unknown>;
+  featureBoard?: FeatureBoardConfig;
 }
 
 export interface Translations {
@@ -76,4 +84,6 @@ export interface Translations {
   severityMedium: string;
   severityHigh: string;
   severityCritical: string;
+  featureBoard: string;
+  suggestFeature: string;
 }

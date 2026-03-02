@@ -18,4 +18,6 @@ export const fr: Translations = {
   severityMedium: 'Moyen',
   severityHigh: 'Élevé',
   severityCritical: 'Critique',
+  featureBoard: 'Tableau des fonctionnalités',
+  suggestFeature: 'Suggérer une fonctionnalité',
 };

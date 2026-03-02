@@ -1,44 +1,54 @@
 # Bug Reporter
 
-Solution complète de bug reporting in-app pour React Native/Expo.
+Solution complete de bug reporting et feature requests in-app pour React Native/Expo.
 
-- **SDK** (`@mindedsolutions/bug-reporter-sdk`) — Shake to report, capture d'écran automatique, formulaire intégré, métadonnées device/app/network
-- **Admin** — Backoffice Next.js pour visualiser et gérer les bugs
-- **Supabase** — Base de données, stockage screenshots, authentification
+- **SDK** (`@mindedsolutions/bug-reporter-sdk`) — Shake to report, capture d'ecran automatique, formulaire integre, lien vers le board de features
+- **Admin** — Backoffice Next.js pour gerer les bugs et les feature requests
+- **Board** — Board public pour soumettre et voter sur les feature requests
+- **Supabase** — Base de donnees, stockage screenshots, authentification
 
 ## Architecture
 
 ```
 App Mobile (Expo)              Supabase                  Admin (Vercel)
 ┌───────────────┐            ┌──────────┐             ┌───────────────┐
-│  SDK intégré  │  upload    │ Storage  │             │  Dashboard    │
-│  Shake/Bouton ├───────────▶│screenshots│            │  Filtres      │
-│  Screenshot   │  insert    │          │   select    │  Détail bug   │
-│  Formulaire   ├───────────▶│bug_reports├────────────▶│  Status/Notes │
-└───────────────┘ (anon key) └──────────┘ (auth key)  └───────────────┘
+│  SDK integre  │  upload    │ Storage  │             │  Dashboard    │
+│  Shake/Bouton ├───────────>│screenshots│            │  Bugs/Features│
+│  Screenshot   │  insert    │          │   select    │  Status/Notes │
+│  Formulaire   ├───────────>│bug_reports├───────────>│  Admin resp.  │
+│  FeatureBoard │            │feature_  │             └───────────────┘
+│    Link       │            │requests  │
+└───────────────┘ (anon key) │feature_  │             Board (Vercel)
+                             │votes     │             ┌───────────────┐
+                             └──────────┘  select     │  Liste votes  │
+                                          ├──────────>│  Soumission   │
+                                          (anon key)  │  Filtres/Tri  │
+                                                      └───────────────┘
 ```
 
 ## Monorepo
 
 ```
 packages/
-  sdk/          → SDK React Native/Expo (npm package)
-  supabase/     → Migrations SQL, seed data
+  sdk/          -> SDK React Native/Expo (npm package)
+  supabase/     -> Migrations SQL, seed data
 apps/
-  admin/        → Backoffice Next.js (Vercel)
+  admin/        -> Backoffice Next.js (Vercel) — port 3000
+  board/        -> Board public Next.js (Vercel) — port 3001
 ```
 
-Géré avec **pnpm workspaces** + **Turborepo**.
+Gere avec **pnpm workspaces** + **Turborepo**.
 
 ## Quick Start
 
 ### 1. Supabase
 
-Créer un projet Supabase et exécuter la migration :
+Creer un projet Supabase et executer les migrations :
 
 ```sql
 -- Copier le contenu de packages/supabase/migrations/001_initial_schema.sql
--- dans l'éditeur SQL de Supabase
+-- puis packages/supabase/migrations/002_feature_requests.sql
+-- dans l'editeur SQL de Supabase
 ```
 
 ### 2. Admin
@@ -46,21 +56,30 @@ Créer un projet Supabase et exécuter la migration :
 ```bash
 cd apps/admin
 cp .env.example .env.local
+# Remplir NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
+pnpm dev
+```
+
+### 3. Board
+
+```bash
+cd apps/board
+cp .env.example .env.local
 # Remplir NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY
 pnpm dev
 ```
 
-Déployer sur Vercel : connecter le repo, root directory `apps/admin`, ajouter les variables d'environnement.
+Deployer sur Vercel : connecter le repo, root directory `apps/board`, ajouter les variables d'environnement.
 
-### 3. SDK
+### 4. SDK
 
 ```bash
 npm install @mindedsolutions/bug-reporter-sdk
 ```
 
 ```tsx
-import { BugReporterProvider } from '@mindedsolutions/bug-reporter-sdk';
-import { useAuth } from './your-auth-hook'; // votre hook d'authentification
+import { BugReporterProvider, FeatureBoardLink } from '@mindedsolutions/bug-reporter-sdk';
+import { useAuth } from './your-auth-hook';
 
 export default function App() {
   const { user } = useAuth();
@@ -73,22 +92,26 @@ export default function App() {
         supabaseAnonKey: 'your-anon-key',
         projectId: 'my-app',
 
-        // Identification du reporter (recommandé)
-        userId: user?.email,              // affiché dans l'admin comme "Reporter"
-        customData: {                     // données supplémentaires visibles dans l'admin
+        // Identification du reporter (recommande)
+        userId: user?.email,
+        customData: {
           uid: user?.id,
           plan: user?.plan,
         },
 
         // Interface
         locale: 'fr',                     // 'en' | 'fr'
-        floatingButton: true,             // bouton flottant (défaut: true)
+        floatingButton: true,             // bouton flottant (defaut: true)
 
-        // Shake : désactivé en __DEV__ par défaut (conflit Expo dev menu)
-        // enableShake: true,             // forcer l'activation en dev si besoin
+        // Feature Board (optionnel)
+        featureBoard: {
+          boardBaseUrl: 'https://your-board.vercel.app',
+        },
       }}
     >
       <YourApp />
+      {/* Placer le lien vers le board ou vous voulez */}
+      <FeatureBoardLink />
     </BugReporterProvider>
   );
 }
@@ -104,64 +127,77 @@ npx expo install expo-sensors react-native-view-shot expo-device expo-applicatio
 
 ### `<BugReporterProvider config={...}>`
 
-| Prop | Type | Défaut | Description |
+| Prop | Type | Defaut | Description |
 |------|------|--------|-------------|
 | `supabaseUrl` | `string` | — | URL du projet Supabase |
-| `supabaseAnonKey` | `string` | — | Clé anon Supabase |
+| `supabaseAnonKey` | `string` | — | Cle anon Supabase |
 | `projectId` | `string` | — | Identifiant du projet (multi-projet) |
 | `locale` | `'en' \| 'fr'` | `'en'` | Langue de l'interface |
-| `enableShake` | `boolean` | `!__DEV__` | Activer la détection de secousse (désactivé en dev pour éviter le conflit avec le menu Expo) |
-| `shakeThreshold` | `number` | `1.8` | Seuil de sensibilité du shake |
+| `enableShake` | `boolean` | `!__DEV__` | Activer la detection de secousse |
+| `shakeThreshold` | `number` | `1.8` | Seuil de sensibilite du shake |
 | `floatingButton` | `boolean` | `true` | Afficher le bouton flottant |
-| `categories` | `BugCategory[]` | `['Bug', 'Crash', 'UI', ...]` | Catégories disponibles |
-| `defaultCategory` | `BugCategory` | `'Bug'` | Catégorie par défaut |
-| `currentScreen` | `string` | — | Nom de l'écran actuel (ex: `HomeScreen`) |
-| `userId` | `string` | — | Email ou ID du reporter — affiché dans l'admin |
-| `customData` | `Record<string, unknown>` | — | Données custom attachées au report (uid, plan, rôle, etc.) |
-| `onReportSubmitted` | `(report) => void` | — | Callback après soumission |
+| `categories` | `BugCategory[]` | `['Bug', 'Crash', ...]` | Categories disponibles |
+| `defaultCategory` | `BugCategory` | `'Bug'` | Categorie par defaut |
+| `currentScreen` | `string` | — | Nom de l'ecran actuel |
+| `userId` | `string` | — | Email ou ID du reporter |
+| `customData` | `Record<string, unknown>` | — | Donnees custom attachees au report |
+| `onReportSubmitted` | `(report) => void` | — | Callback apres soumission |
+| `featureBoard` | `FeatureBoardConfig` | — | Configuration du board de features |
 
-### Identifier le reporter
+### `<FeatureBoardLink />`
 
-Pour savoir **qui** a signalé un bug, passez `userId` et/ou `customData` :
+Bouton style (indigo) qui ouvre le board public dans le navigateur. A placer ou vous voulez dans l'app.
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `style` | `ViewStyle` | Style du bouton |
+| `textStyle` | `TextStyle` | Style du texte |
+| `label` | `string` | Label custom (defaut: traduction `suggestFeature`) |
+
+Retourne `null` si `featureBoard` n'est pas configure.
+
+### `useFeatureBoard()`
+
+Hook pour controler le board programmatiquement :
 
 ```tsx
-<BugReporterProvider
-  config={{
-    ...
-    userId: user.email,           // visible dans l'admin sous "Reporter"
-    customData: {
-      uid: user.id,               // visible dans l'admin sous "Custom Data"
-      plan: 'premium',
-      role: 'admin',
-    },
-  }}
->
+const { boardUrl, openFeatureBoard } = useFeatureBoard();
 ```
-
-Ces informations apparaissent dans le backoffice admin sur la page de détail de chaque bug.
 
 ### `useBugReporter()`
 
-Hook pour contrôler le reporter programmatiquement :
+Hook pour controler le reporter programmatiquement :
 
 ```tsx
 const { openModal, closeModal, isModalVisible } = useBugReporter();
 ```
 
-### `<FloatingButton />`
+## Board public
 
-Bouton flottant standalone si `floatingButton: false` dans la config :
+Le board public (`apps/board`) permet aux utilisateurs de :
 
-```tsx
-import { FloatingButton } from '@mindedsolutions/bug-reporter-sdk';
-```
+- Voir les feature requests existantes
+- Voter / devoter (toggle via UNIQUE constraint)
+- Soumettre de nouvelles feature requests
+- Filtrer par statut et trier par votes ou date
 
-## Développement
+L'identite du votant est geree via `voter_id` :
+- Si passe en query param (depuis le SDK) : stocke en localStorage
+- Sinon : genere avec `crypto.randomUUID()` et stocke en localStorage
+
+## Admin
+
+Le backoffice admin permet de gerer :
+
+- **Bugs** (`/`) — Liste, filtres, detail, changement de statut, notes, assignation
+- **Features** (`/features`) — Liste, filtres, detail, changement de statut, reponse admin
+
+## Developpement
 
 ```bash
 pnpm install
 pnpm build        # Build tous les packages
-pnpm dev          # Dev mode
+pnpm dev          # Dev mode (admin :3000, board :3001, sdk watch)
 ```
 
 ## Licence

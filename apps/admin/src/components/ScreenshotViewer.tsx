@@ -4,13 +4,18 @@ import { useState } from 'react';
 
 export function ScreenshotViewer({ url }: { url: string | null }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   if (!url) return <span className="text-sm text-gray-400">No screenshot</span>;
+
+  if (hasError) {
+    return <span className="text-sm text-gray-400">Screenshot failed to load</span>;
+  }
 
   return (
     <>
       <button onClick={() => setIsOpen(true)} className="block overflow-hidden rounded-lg border border-gray-200 hover:border-indigo-300 transition-colors">
-        <img src={url} alt="Bug screenshot" className="h-48 w-full object-cover" />
+        <img src={url} alt="Bug screenshot" className="h-48 w-full object-cover" onError={() => setHasError(true)} />
       </button>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={() => setIsOpen(false)}>
