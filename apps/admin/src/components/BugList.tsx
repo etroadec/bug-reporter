@@ -1,15 +1,28 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { StatusBadge } from './StatusBadge';
 import { SeverityBadge } from './SeverityBadge';
-import type { BugReport } from '@/lib/supabase';
+import { createSupabaseClient, type BugReport } from '@/lib/supabase';
+
+const STATUSES = ['open', 'in_progress', 'resolved', 'closed'];
 
 export function BugList({ bugs }: { bugs: BugReport[] }) {
+  const router = useRouter();
+
   if (bugs.length === 0) {
     return (
       <div className="rounded-xl border border-gray-200 bg-white p-12 text-center">
         <p className="text-gray-500">No bug reports found.</p>
       </div>
     );
+  }
+
+  async function handleStatusChange(id: string, newStatus: string) {
+    const supabase = createSupabaseClient();
+    await supabase.from('bug_reports').update({ status: newStatus }).eq('id', id);
+    router.refresh();
   }
 
   return (
@@ -39,7 +52,21 @@ export function BugList({ bugs }: { bugs: BugReport[] }) {
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-700">{bug.category}</td>
                 <td className="whitespace-nowrap px-6 py-4"><SeverityBadge severity={bug.severity} /></td>
-                <td className="whitespace-nowrap px-6 py-4"><StatusBadge status={bug.status} /></td>
+                <td className="whitespace-nowrap px-6 py-4">
+                  <select
+                    value={bug.status}
+                    onChange={(e) => handleStatusChange(bug.id, e.target.value)}
+                    className="cursor-pointer appearance-none rounded-full border-0 bg-transparent py-0.5 pr-6 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
+                    style={{ backgroundImage: 'none' }}
+                  >
+                    {STATUSES.map((s) => (
+                      <option key={s} value={s}>
+                        {s === 'in_progress' ? 'In Progress' : s.charAt(0).toUpperCase() + s.slice(1)}
+                      </option>
+                    ))}
+                  </select>
+                  <StatusBadge status={bug.status} />
+                </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                   {bug.device_brand && bug.device_model
                     ? `${bug.device_brand} ${bug.device_model}`

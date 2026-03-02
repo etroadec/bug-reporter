@@ -7,10 +7,11 @@ const STATUSES = ['all', 'open', 'in_progress', 'resolved', 'closed'];
 const CATEGORIES = ['all', 'Bug', 'Crash', 'UI', 'Performance', 'Feature Request', 'Other'];
 const SEVERITIES = ['all', 'low', 'medium', 'high', 'critical'];
 
-export function BugFilters() {
+export function BugFilters({ projects }: { projects: string[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const currentProject = searchParams.get('project') ?? 'all';
   const currentStatus = searchParams.get('status') ?? 'all';
   const currentCategory = searchParams.get('category') ?? 'all';
   const currentSeverity = searchParams.get('severity') ?? 'all';
@@ -31,6 +32,18 @@ export function BugFilters() {
 
   return (
     <div className="flex flex-wrap gap-3">
+      {projects.length > 1 && (
+        <select
+          value={currentProject}
+          onChange={(e) => updateFilter('project', e.target.value)}
+          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+        >
+          <option value="all">All Projects</option>
+          {projects.map((p) => (
+            <option key={p} value={p}>{p}</option>
+          ))}
+        </select>
+      )}
       <select
         value={currentStatus}
         onChange={(e) => updateFilter('status', e.target.value)}

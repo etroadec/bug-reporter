@@ -8,7 +8,7 @@ const PAGE_SIZE = 20;
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; category?: string; severity?: string; page?: string }>;
+  searchParams: Promise<{ status?: string; category?: string; severity?: string; project?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const supabase = createSupabaseClient();
@@ -16,12 +16,22 @@ export default async function DashboardPage({
   const from = (page - 1) * PAGE_SIZE;
   const to = from + PAGE_SIZE - 1;
 
+  // Fetch distinct project IDs for the filter dropdown
+  const { data: projectRows } = await supabase
+    .from('bug_reports')
+    .select('project_id')
+    .order('project_id');
+  const projects = [...new Set((projectRows ?? []).map((r) => r.project_id))];
+
   let query = supabase
     .from('bug_reports')
     .select('*', { count: 'exact' })
     .order('created_at', { ascending: false })
     .range(from, to);
 
+  if (params.project && params.project !== 'all') {
+    query = query.eq('project_id', params.project);
+  }
   if (params.status && params.status !== 'all') {
     query = query.eq('status', params.status);
   }
@@ -37,6 +47,7 @@ export default async function DashboardPage({
 
   const buildPageUrl = (p: number) => {
     const sp = new URLSearchParams();
+    if (params.project) sp.set('project', params.project);
     if (params.status) sp.set('status', params.status);
     if (params.category) sp.set('category', params.category);
     if (params.severity) sp.set('severity', params.severity);
@@ -53,7 +64,7 @@ export default async function DashboardPage({
           <p className="mt-1 text-sm text-gray-500">{count ?? 0} total reports</p>
         </div>
         <Suspense>
-          <BugFilters />
+          <BugFilters projects={projects} />
         </Suspense>
       </div>
 
