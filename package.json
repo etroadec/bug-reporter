@@ -1,5 +1,5 @@
 {
-  "name": "bugnfeat-reporter",
+  "name": "bug-reporter",
   "private": true,
   "scripts": {
     "build": "turbo build",

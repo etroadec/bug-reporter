@@ -1,5 +1,5 @@
 {
-  "name": "@bugnfeat-reporter/admin",
+  "name": "@bug-reporter/admin",
   "version": "0.1.0",
   "private": true,
   "scripts": {
