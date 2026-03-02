@@ -1,6 +1,6 @@
 {
-  "name": "@bug-reporter/supabase",
+  "name": "@bugnfeat-reporter/supabase",
   "version": "0.1.0",
   "private": true,
-  "description": "Supabase schema, migrations and seed data for Bug Reporter"
+  "description": "Supabase schema, migrations and seed data for BugnFeat Reporter"
 }

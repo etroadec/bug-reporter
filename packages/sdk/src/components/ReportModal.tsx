@@ -22,27 +22,34 @@ import type { BugCategory, BugSeverity, BugReportPayload } from '../types';
 
 export function ReportModal() {
   const { config, translations, isModalVisible, closeModal } = useBugReporter();
-  const { captureScreenshot, uploadScreenshot } = useScreenCapture();
+  const { captureAndUpload } = useScreenCapture();
   const { getDeviceInfo, getAppInfo, getNetworkInfo } = useDeviceInfo();
 
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<BugCategory>(config.defaultCategory ?? 'Bug');
   const [severity, setSeverity] = useState<BugSeverity | undefined>();
   const [screenshotUri, setScreenshotUri] = useState<string | null>(null);
+  const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const categories = config.categories ?? DEFAULT_CATEGORIES;
 
-  // Capture screenshot when modal opens
+  // Capture screenshot and upload when modal opens
   useEffect(() => {
     if (isModalVisible) {
-      captureScreenshot().then(setScreenshotUri);
+      captureAndUpload().then((result) => {
+        if (result) {
+          setScreenshotUri(result.uri);
+          setScreenshotUrl(result.url || null);
+        }
+      });
     } else {
       // Reset form when modal closes
       setDescription('');
       setCategory(config.defaultCategory ?? 'Bug');
       setSeverity(undefined);
       setScreenshotUri(null);
+      setScreenshotUrl(null);
       setIsSubmitting(false);
     }
   }, [isModalVisible]);
@@ -56,17 +63,11 @@ export function ReportModal() {
       const app = getAppInfo();
       const network = await getNetworkInfo();
 
-      let screenshotUrl: string | undefined;
-      if (screenshotUri) {
-        const url = await uploadScreenshot(screenshotUri);
-        if (url) screenshotUrl = url;
-      }
-
       const payload: BugReportPayload = {
         description: description.trim(),
         category,
         severity,
-        screenshot_url: screenshotUrl,
+        screenshot_url: screenshotUrl || undefined,
         device_brand: device.brand,
         device_model: device.model,
         device_os: device.os,
@@ -96,7 +97,7 @@ export function ReportModal() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [description, category, severity, screenshotUri, config, translations, closeModal]);
+  }, [description, category, severity, screenshotUrl, config, translations, closeModal]);
 
   return (
     <Modal visible={isModalVisible} animationType="slide" presentationStyle="fullScreen" onRequestClose={closeModal}>
