@@ -27,6 +27,16 @@ export type BugReport = {
   updated_at: string;
 };
 
+// Server-side client using service_role key — bypasses RLS
+// Safe because it only runs in server components / API routes (never sent to browser)
+export function createSupabaseAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
+
+// Client-side client using anon key — subject to RLS
 export function createSupabaseClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

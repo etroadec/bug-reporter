@@ -1,4 +1,4 @@
-import { createSupabaseClient } from '@/lib/supabase';
+import { createSupabaseAdmin } from '@/lib/supabase';
 import { BugList } from '@/components/BugList';
 import { BugFilters } from '@/components/BugFilters';
 import { Suspense } from 'react';
@@ -11,7 +11,7 @@ export default async function DashboardPage({
   searchParams: Promise<{ status?: string; category?: string; severity?: string; project?: string; page?: string }>;
 }) {
   const params = await searchParams;
-  const supabase = createSupabaseClient();
+  const supabase = createSupabaseAdmin();
   const page = parseInt(params.page ?? '1', 10);
   const from = (page - 1) * PAGE_SIZE;
   const to = from + PAGE_SIZE - 1;

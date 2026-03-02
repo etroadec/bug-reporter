@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { StatusBadge } from './StatusBadge';
 import { SeverityBadge } from './SeverityBadge';
-import { createSupabaseClient, type BugReport } from '@/lib/supabase';
+import type { BugReport } from '@/lib/supabase';
 
 const STATUSES = ['open', 'in_progress', 'resolved', 'closed'];
 
@@ -20,8 +20,11 @@ export function BugList({ bugs }: { bugs: BugReport[] }) {
   }
 
   async function handleStatusChange(id: string, newStatus: string) {
-    const supabase = createSupabaseClient();
-    await supabase.from('bug_reports').update({ status: newStatus }).eq('id', id);
+    await fetch(`/api/bugs/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus }),
+    });
     router.refresh();
   }
 

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSupabaseClient } from '@/lib/supabase';
+import { createSupabaseAdmin } from '@/lib/supabase';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const format = searchParams.get('format');
-  const supabase = createSupabaseClient();
+  const supabase = createSupabaseAdmin();
 
   let query = supabase
     .from('bug_reports')

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createSupabaseClient, type BugReport } from '@/lib/supabase';
+import type { BugReport } from '@/lib/supabase';
 import { StatusBadge } from './StatusBadge';
 import { SeverityBadge } from './SeverityBadge';
 import { ScreenshotViewer } from './ScreenshotViewer';
@@ -19,11 +19,11 @@ export function BugDetail({ bug }: { bug: BugReport }) {
   async function handleSave() {
     setSaving(true);
     try {
-      const supabase = createSupabaseClient();
-      await supabase
-        .from('bug_reports')
-        .update({ status, notes: notes || null, assigned_to: assignedTo || null })
-        .eq('id', bug.id);
+      await fetch(`/api/bugs/${bug.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, notes: notes || null, assigned_to: assignedTo || null }),
+      });
       router.refresh();
     } finally {
       setSaving(false);
