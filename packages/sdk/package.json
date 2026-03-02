@@ -1,6 +1,6 @@
 {
   "name": "@mindedsolutions/bug-reporter-sdk",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "In-app bug reporting and feature request SDK for React Native/Expo with shake detection, screenshot capture, feature board, and Supabase integration",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
