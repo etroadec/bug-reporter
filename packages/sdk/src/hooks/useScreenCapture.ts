@@ -29,12 +29,17 @@ export function useScreenCapture() {
         const uniqueId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
         const fileName = `${config.projectId}/${uniqueId}.jpg`;
 
-        const response = await fetch(uri);
-        const blob = await response.blob();
+        // React Native: use FormData with file URI (fetch blob doesn't work reliably)
+        const formData = new FormData();
+        formData.append('', {
+          uri,
+          name: `${uniqueId}.jpg`,
+          type: 'image/jpeg',
+        } as unknown as Blob);
 
         const { error } = await supabase.storage
           .from('screenshots')
-          .upload(fileName, blob, { contentType: 'image/jpeg' });
+          .upload(fileName, formData, { contentType: 'multipart/form-data' });
 
         if (error) return null;
 
