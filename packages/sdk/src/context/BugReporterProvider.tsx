@@ -20,8 +20,10 @@ export function BugReporterProvider({ config, children }: Props) {
   const openModal = useCallback(() => setIsModalVisible(true), []);
   const closeModal = useCallback(() => setIsModalVisible(false), []);
 
+  const shakeEnabled = config.enableShake ?? !__DEV__;
+
   useShakeDetection({
-    enabled: config.enableShake !== false,
+    enabled: shakeEnabled,
     threshold: config.shakeThreshold,
     onShake: openModal,
   });
