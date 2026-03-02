@@ -9,9 +9,17 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
-import { WebView } from 'react-native-webview';
+import { WebView as RNWebView } from 'react-native-webview';
 import { useBugReporter } from '../hooks/useBugReporter';
 import { useFeatureBoard } from '../hooks/useFeatureBoard';
+
+// Cast to work around React 18/19 JSX type incompatibility
+const WebView = RNWebView as unknown as React.ComponentType<{
+  source: { uri: string };
+  style?: object;
+  startInLoadingState?: boolean;
+  renderLoading?: () => React.ReactElement;
+}>;
 
 export function FeatureBoardModal() {
   const { translations, isBoardVisible, closeBoard } = useBugReporter();
