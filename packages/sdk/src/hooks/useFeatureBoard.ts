@@ -1,9 +1,8 @@
-import { useCallback, useMemo } from 'react';
-import { Linking } from 'react-native';
+import { useMemo } from 'react';
 import { useBugReporter } from './useBugReporter';
 
 export function useFeatureBoard() {
-  const { config } = useBugReporter();
+  const { config, openBoard, closeBoard, isBoardVisible } = useBugReporter();
 
   const boardUrl = useMemo(() => {
     if (!config.featureBoard) return null;
@@ -12,11 +11,5 @@ export function useFeatureBoard() {
     return config.userId ? `${url}?voter_id=${encodeURIComponent(config.userId)}` : url;
   }, [config.featureBoard, config.projectId, config.userId]);
 
-  const openFeatureBoard = useCallback(() => {
-    if (boardUrl) {
-      Linking.openURL(boardUrl);
-    }
-  }, [boardUrl]);
-
-  return { boardUrl, openFeatureBoard };
+  return { boardUrl, openFeatureBoard: openBoard, closeFeatureBoard: closeBoard, isBoardVisible };
 }

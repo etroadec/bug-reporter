@@ -1,6 +1,6 @@
 {
   "name": "@mindedsolutions/bug-reporter-sdk",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "In-app bug reporting and feature request SDK for React Native/Expo with shake detection, screenshot capture, feature board, and Supabase integration",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,13 +21,14 @@
     "clean": "rm -rf dist"
   },
   "peerDependencies": {
+    "expo-application": ">=5",
+    "expo-device": ">=6",
+    "expo-network": ">=6",
+    "expo-sensors": ">=13",
     "react": ">=18",
     "react-native": ">=0.72",
-    "expo-sensors": ">=13",
     "react-native-view-shot": ">=3",
-    "expo-device": ">=6",
-    "expo-application": ">=5",
-    "expo-network": ">=6"
+    "react-native-webview": ">=13"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.0"
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@types/react": "^18",
     "@types/react-native": "^0.72",
+    "react-native-webview": "^13.16.1",
     "typescript": "^5.5.0"
   }
 }

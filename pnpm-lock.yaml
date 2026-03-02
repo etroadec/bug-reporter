@@ -134,6 +134,9 @@ importers:
       '@types/react-native':
         specifier: ^0.72
         version: 0.72.8(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))
+      react-native-webview:
+        specifier: ^13.16.1
+        version: 13.16.1(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))(react@19.2.4)
       typescript:
         specifier: ^5.5.0
         version: 5.9.3
@@ -2602,6 +2605,12 @@ packages:
 
   react-native-view-shot@4.0.3:
     resolution: {integrity: sha512-USNjYmED7C0me02c1DxKA0074Hw+y/nxo+xJKlffMvfUWWzL5ELh/TJA/pTnVqFurIrzthZDPtDM7aBFJuhrHQ==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+
+  react-native-webview@13.16.1:
+    resolution: {integrity: sha512-If0eHhoEdOYDcHsX+xBFwHMbWBGK1BvGDQDQdVkwtSIXiq1uiqjkpWVP2uQ1as94J0CzvFE9PUNDuhiX0Z6ubw==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -6097,6 +6106,13 @@ snapshots:
   react-native-view-shot@4.0.3(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))(react@19.2.4):
     dependencies:
       html2canvas: 1.4.1
+      react: 19.2.4
+      react-native: 0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4)
+
+  react-native-webview@13.16.1(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))(react@19.2.4):
+    dependencies:
+      escape-string-regexp: 4.0.0
+      invariant: 2.2.4
       react: 19.2.4
       react-native: 0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4)
 

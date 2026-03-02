@@ -9,6 +9,9 @@ export interface BugReporterContextValue {
   isModalVisible: boolean;
   openModal: () => void;
   closeModal: () => void;
+  isBoardVisible: boolean;
+  openBoard: () => void;
+  closeBoard: () => void;
   viewRef: RefObject<View>;
 }
 
