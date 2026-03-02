@@ -1,0 +1,44 @@
+import React, { useCallback, useRef, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { BugReporterContext } from './BugReporterContext';
+import { ReportModal } from '../components/ReportModal';
+import { FloatingButton } from '../components/FloatingButton';
+import { useShakeDetection } from '../hooks/useShakeDetection';
+import { getTranslations } from '../i18n';
+import type { BugReporterConfig } from '../types';
+
+interface Props {
+  config: BugReporterConfig;
+  children: React.ReactNode;
+}
+
+export function BugReporterProvider({ config, children }: Props) {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const viewRef = useRef<View>(null);
+  const translations = getTranslations(config.locale);
+
+  const openModal = useCallback(() => setIsModalVisible(true), []);
+  const closeModal = useCallback(() => setIsModalVisible(false), []);
+
+  useShakeDetection({
+    enabled: config.enableShake !== false,
+    threshold: config.shakeThreshold,
+    onShake: openModal,
+  });
+
+  return (
+    <BugReporterContext.Provider
+      value={{ config, translations, isModalVisible, openModal, closeModal, viewRef }}
+    >
+      <View ref={viewRef} collapsable={false} style={styles.container}>
+        {children}
+      </View>
+      {config.floatingButton !== false && <FloatingButton onPress={openModal} />}
+      <ReportModal />
+    </BugReporterContext.Provider>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+});
