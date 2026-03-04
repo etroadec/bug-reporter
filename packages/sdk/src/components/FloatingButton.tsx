@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, type ViewStyle } from 'react-native';
+import { Modal, TouchableOpacity, Text, StyleSheet, type ViewStyle } from 'react-native';
 
 interface Props {
   onPress: () => void;
@@ -8,9 +8,11 @@ interface Props {
 
 export function FloatingButton({ onPress, style }: Props) {
   return (
-    <TouchableOpacity style={[styles.button, style]} onPress={onPress} activeOpacity={0.8}>
-      <Text style={styles.icon}>🐛</Text>
-    </TouchableOpacity>
+    <Modal transparent visible animationType="none" statusBarTranslucent>
+      <TouchableOpacity style={[styles.button, style]} onPress={onPress} activeOpacity={0.8}>
+        <Text style={styles.icon}>🐛</Text>
+      </TouchableOpacity>
+    </Modal>
   );
 }
 
@@ -19,7 +21,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 100,
     right: 20,
-    zIndex: 9999,
     width: 56,
     height: 56,
     borderRadius: 28,
