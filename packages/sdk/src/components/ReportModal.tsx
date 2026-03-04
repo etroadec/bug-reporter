@@ -21,7 +21,7 @@ import { DEFAULT_CATEGORIES, SEVERITIES } from '../constants';
 import type { BugCategory, BugSeverity, BugReportPayload } from '../types';
 
 export function ReportModal() {
-  const { config, translations, isModalVisible, closeModal } = useBugReporter();
+  const { config, translations, isModalVisible, closeModal, pendingScreenshot } = useBugReporter();
   const { captureAndUpload } = useScreenCapture();
   const { getDeviceInfo, getAppInfo, getNetworkInfo } = useDeviceInfo();
 
@@ -34,15 +34,20 @@ export function ReportModal() {
 
   const categories = config.categories ?? DEFAULT_CATEGORIES;
 
-  // Capture screenshot and upload when modal opens
+  // Use pre-captured screenshot if available (shake flow), otherwise capture on open (button flow)
   useEffect(() => {
     if (isModalVisible) {
-      captureAndUpload().then((result) => {
-        if (result) {
-          setScreenshotUri(result.uri);
-          setScreenshotUrl(result.url || null);
-        }
-      });
+      if (pendingScreenshot) {
+        setScreenshotUri(pendingScreenshot.uri);
+        setScreenshotUrl(pendingScreenshot.url || null);
+      } else {
+        captureAndUpload().then((result) => {
+          if (result) {
+            setScreenshotUri(result.uri);
+            setScreenshotUrl(result.url || null);
+          }
+        });
+      }
     } else {
       // Reset form when modal closes
       setDescription('');

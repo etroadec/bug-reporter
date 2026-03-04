@@ -3,6 +3,11 @@ import type { RefObject } from 'react';
 import type { View } from 'react-native';
 import type { BugReporterConfig, Translations } from '../types';
 
+export interface ScreenshotData {
+  uri: string;
+  url: string;
+}
+
 export interface BugReporterContextValue {
   config: BugReporterConfig;
   translations: Translations;
@@ -13,6 +18,7 @@ export interface BugReporterContextValue {
   openBoard: () => void;
   closeBoard: () => void;
   viewRef: RefObject<View>;
+  pendingScreenshot: ScreenshotData | null;
 }
 
 export const BugReporterContext = createContext<BugReporterContextValue | null>(null);
