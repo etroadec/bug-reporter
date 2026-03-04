@@ -39,7 +39,11 @@ export function BugReporterProvider({ config, children }: Props) {
       <View ref={viewRef} collapsable={false} style={styles.container}>
         {children}
       </View>
-      {config.floatingButton !== false && <FloatingButton onPress={openModal} style={config.floatingButtonStyle} />}
+      {config.floatingButton !== false && (
+        <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
+          <FloatingButton onPress={openModal} style={config.floatingButtonStyle} />
+        </View>
+      )}
       <ReportModal />
       <FeatureBoardModal />
     </BugReporterContext.Provider>
