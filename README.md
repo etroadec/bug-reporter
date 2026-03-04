@@ -198,7 +198,7 @@ Le backoffice admin permet de gerer :
 |----------|-------------|-------------|------------------|-------------|----------------------|---------------------|
 | **SDK 52** | ~13 | ~6 | ~5 | ~6 | ~3.8 | ~13.6 |
 | **SDK 53** | ~14 | ~7 | ~6 | ~7 | ~4.0 | ~13.12 |
-| **SDK 54** | ~15 | ~8 | ~7 | ~7 | ~4.0 | ~13.12 |
+| **SDK 54** | ~15 | ~8 | ~7 | ~8 | ~4.0 | ~13.12 |
 
 Le SDK a ete teste avec ces combinaisons. Les `peerDependencies` du `package.json` sont bornees pour eviter l'installation de versions futures incompatibles.
 
