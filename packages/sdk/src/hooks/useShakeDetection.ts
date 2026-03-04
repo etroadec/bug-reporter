@@ -18,29 +18,33 @@ export function useShakeDetection({ enabled, threshold, onShake }: UseShakeDetec
   useEffect(() => {
     if (!enabled) return;
 
-    Accelerometer.setUpdateInterval(100);
+    try {
+      Accelerometer.setUpdateInterval(100);
 
-    const subscription = Accelerometer.addListener(({ x, y, z }) => {
-      const magnitude = Math.sqrt(x * x + y * y + z * z);
+      const subscription = Accelerometer.addListener(({ x, y, z }) => {
+        const magnitude = Math.sqrt(x * x + y * y + z * z);
 
-      if (magnitude < shakeThreshold) return;
+        if (magnitude < shakeThreshold) return;
 
-      const now = Date.now();
+        const now = Date.now();
 
-      // Cooldown check
-      if (now - lastShake.current < SHAKE_COOLDOWN_MS) return;
+        // Cooldown check
+        if (now - lastShake.current < SHAKE_COOLDOWN_MS) return;
 
-      // Add timestamp and clean old ones
-      timestamps.current.push(now);
-      timestamps.current = timestamps.current.filter((t) => now - t < SHAKE_WINDOW_MS);
+        // Add timestamp and clean old ones
+        timestamps.current.push(now);
+        timestamps.current = timestamps.current.filter((t) => now - t < SHAKE_WINDOW_MS);
 
-      if (timestamps.current.length >= SHAKE_COUNT) {
-        lastShake.current = now;
-        timestamps.current = [];
-        onShakeRef.current();
-      }
-    });
+        if (timestamps.current.length >= SHAKE_COUNT) {
+          lastShake.current = now;
+          timestamps.current = [];
+          onShakeRef.current();
+        }
+      });
 
-    return () => subscription.remove();
+      return () => subscription.remove();
+    } catch {
+      // Native module not available (e.g. version mismatch)
+    }
   }, [enabled, shakeThreshold]);
 }

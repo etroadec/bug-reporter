@@ -6,20 +6,28 @@ import type { DeviceInfo, AppInfo, NetworkInfo } from '../types';
 
 export function useDeviceInfo() {
   const getDeviceInfo = useCallback((): DeviceInfo => {
-    return {
-      brand: Device.brand,
-      model: Device.modelName,
-      os: Device.osName,
-      osVersion: Device.osVersion,
-    };
+    try {
+      return {
+        brand: Device.brand,
+        model: Device.modelName,
+        os: Device.osName,
+        osVersion: Device.osVersion,
+      };
+    } catch {
+      return { brand: null, model: null, os: null, osVersion: null };
+    }
   }, []);
 
   const getAppInfo = useCallback((): AppInfo => {
-    return {
-      name: Application.applicationName,
-      version: Application.nativeApplicationVersion,
-      build: Application.nativeBuildVersion,
-    };
+    try {
+      return {
+        name: Application.applicationName,
+        version: Application.nativeApplicationVersion,
+        build: Application.nativeBuildVersion,
+      };
+    } catch {
+      return { name: null, version: null, build: null };
+    }
   }, []);
 
   const getNetworkInfo = useCallback(async (): Promise<NetworkInfo> => {
