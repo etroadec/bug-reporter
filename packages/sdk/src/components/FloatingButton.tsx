@@ -1,13 +1,14 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, type ViewStyle } from 'react-native';
 
 interface Props {
   onPress: () => void;
+  style?: ViewStyle;
 }
 
-export function FloatingButton({ onPress }: Props) {
+export function FloatingButton({ onPress, style }: Props) {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress} activeOpacity={0.8}>
+    <TouchableOpacity style={[styles.button, style]} onPress={onPress} activeOpacity={0.8}>
       <Text style={styles.icon}>🐛</Text>
     </TouchableOpacity>
   );
@@ -18,6 +19,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 100,
     right: 20,
+    zIndex: 9999,
     width: 56,
     height: 56,
     borderRadius: 28,

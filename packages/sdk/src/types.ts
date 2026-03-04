@@ -1,3 +1,7 @@
+import type { ViewStyle } from 'react-native';
+
+type ViewStyleProp = ViewStyle;
+
 export type BugCategory = 'Bug' | 'Crash' | 'UI' | 'Performance' | 'Feature Request' | 'Other';
 export type BugSeverity = 'low' | 'medium' | 'high' | 'critical';
 export type BugStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
@@ -57,6 +61,7 @@ export interface BugReporterConfig {
   enableShake?: boolean;
   shakeThreshold?: number;
   floatingButton?: boolean;
+  floatingButtonStyle?: ViewStyleProp;
   categories?: BugCategory[];
   defaultCategory?: BugCategory;
   onReportSubmitted?: (report: BugReportPayload) => void;
