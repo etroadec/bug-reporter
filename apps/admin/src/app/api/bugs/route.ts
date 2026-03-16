@@ -1,6 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdmin } from '@/lib/supabase';
 
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+  const supabase = createSupabaseAdmin();
+
+  const insert: Record<string, unknown> = {};
+  const allowedFields = [
+    'description', 'category', 'severity', 'status', 'project_id',
+    'screenshot_url', 'device_brand', 'device_model', 'device_os',
+    'device_os_version', 'app_name', 'app_version', 'app_build',
+    'current_screen', 'reported_by', 'assigned_to', 'notes',
+  ];
+
+  for (const field of allowedFields) {
+    if (body[field] !== undefined && body[field] !== '') {
+      insert[field] = body[field];
+    }
+  }
+
+  if (!insert.description) {
+    return NextResponse.json({ error: 'Description is required' }, { status: 400 });
+  }
+  if (!insert.project_id) {
+    return NextResponse.json({ error: 'Project ID is required' }, { status: 400 });
+  }
+
+  const { data, error } = await supabase
+    .from('bug_reports')
+    .insert(insert)
+    .select()
+    .single();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json(data, { status: 201 });
+}
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const format = searchParams.get('format');

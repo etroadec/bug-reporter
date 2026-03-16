@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import type { BugReport } from '@/lib/supabase';
 import { StatusBadge } from './StatusBadge';
@@ -8,25 +8,79 @@ import { SeverityBadge } from './SeverityBadge';
 import { ScreenshotViewer } from './ScreenshotViewer';
 
 const STATUSES = ['open', 'in_progress', 'resolved', 'closed'];
+const CATEGORIES = ['Bug', 'Crash', 'UI', 'Performance', 'Feature Request', 'Other'];
+const SEVERITIES = ['low', 'medium', 'high', 'critical'];
 
 export function BugDetail({ bug }: { bug: BugReport }) {
   const router = useRouter();
+  const fileRef = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState(bug.status);
   const [notes, setNotes] = useState(bug.notes ?? '');
   const [assignedTo, setAssignedTo] = useState(bug.assigned_to ?? '');
+  const [description, setDescription] = useState(bug.description);
+  const [category, setCategory] = useState(bug.category);
+  const [severity, setSeverity] = useState(bug.severity ?? '');
+  const [screenshotUrl, setScreenshotUrl] = useState(bug.screenshot_url);
+  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      setScreenshotPreview(URL.createObjectURL(file));
+    } else {
+      setScreenshotPreview(null);
+    }
+  }
 
   async function handleSave() {
     setSaving(true);
     try {
+      let newScreenshotUrl = screenshotUrl;
+
+      // Upload new screenshot if one was selected
+      const file = fileRef.current?.files?.[0];
+      if (file) {
+        const fd = new FormData();
+        fd.append('file', file);
+        const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd });
+        const uploadData = await uploadRes.json();
+        if (uploadRes.ok) {
+          newScreenshotUrl = uploadData.url;
+        }
+      }
+
       await fetch(`/api/bugs/${bug.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status, notes: notes || null, assigned_to: assignedTo || null }),
+        body: JSON.stringify({
+          status,
+          notes: notes || null,
+          assigned_to: assignedTo || null,
+          description,
+          category,
+          severity: severity || null,
+          screenshot_url: newScreenshotUrl,
+        }),
       });
       router.refresh();
     } finally {
       setSaving(false);
+      setScreenshotPreview(null);
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  }
+
+  async function handleDelete() {
+    if (!confirm('Are you sure you want to delete this bug report?')) return;
+    setDeleting(true);
+    try {
+      await fetch(`/api/bugs/${bug.id}`, { method: 'DELETE' });
+      router.push('/');
+      router.refresh();
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -43,7 +97,7 @@ export function BugDetail({ bug }: { bug: BugReport }) {
         </div>
         <div className="flex items-center gap-2">
           <StatusBadge status={status} />
-          <SeverityBadge severity={bug.severity} />
+          <SeverityBadge severity={severity} />
         </div>
       </div>
 
@@ -53,13 +107,32 @@ export function BugDetail({ bug }: { bug: BugReport }) {
           {/* Screenshot */}
           <div className="rounded-xl border border-gray-200 bg-white p-6">
             <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">Screenshot</h2>
-            <ScreenshotViewer url={bug.screenshot_url} />
+            {screenshotPreview ? (
+              <img src={screenshotPreview} alt="New screenshot" className="max-h-96 rounded-lg border border-gray-200 object-contain" />
+            ) : (
+              <ScreenshotViewer url={screenshotUrl} />
+            )}
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700">Change screenshot</label>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="mt-1 w-full text-sm text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-indigo-600 hover:file:bg-indigo-100"
+              />
+            </div>
           </div>
 
           {/* Description */}
           <div className="rounded-xl border border-gray-200 bg-white p-6">
             <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">Description</h2>
-            <p className="whitespace-pre-wrap text-gray-700">{bug.description}</p>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={4}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            />
           </div>
 
           {/* Custom data */}
@@ -79,6 +152,31 @@ export function BugDetail({ bug }: { bug: BugReport }) {
           <div className="rounded-xl border border-gray-200 bg-white p-6">
             <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">Actions</h2>
             <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Category</label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                >
+                  {CATEGORIES.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Severity</label>
+                <select
+                  value={severity}
+                  onChange={(e) => setSeverity(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                >
+                  <option value="">None</option>
+                  {SEVERITIES.map((s) => (
+                    <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+                  ))}
+                </select>
+              </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Status</label>
                 <select
@@ -119,6 +217,13 @@ export function BugDetail({ bug }: { bug: BugReport }) {
                 className="w-full rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
               >
                 {saving ? 'Saving...' : 'Save Changes'}
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="w-full rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+              >
+                {deleting ? 'Deleting...' : 'Delete Bug'}
               </button>
             </div>
           </div>

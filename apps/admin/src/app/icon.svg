@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <circle cx="32" cy="32" r="30" fill="#4F46E5"/>
+  <g stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none">
+    <!-- body -->
+    <ellipse cx="32" cy="36" rx="10" ry="13"/>
+    <!-- head -->
+    <circle cx="32" cy="21" r="6"/>
+    <!-- antennae -->
+    <path d="M28 16l-5-7"/>
+    <path d="M36 16l5-7"/>
+    <!-- legs left -->
+    <path d="M22 30l-8-4"/>
+    <path d="M22 36l-8 0"/>
+    <path d="M22 42l-8 4"/>
+    <!-- legs right -->
+    <path d="M42 30l8-4"/>
+    <path d="M42 36l8 0"/>
+    <path d="M42 42l8 4"/>
+  </g>
+</svg>

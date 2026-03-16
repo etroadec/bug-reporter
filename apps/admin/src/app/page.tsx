@@ -1,6 +1,8 @@
 import { createSupabaseAdmin } from '@/lib/supabase';
 import { BugList } from '@/components/BugList';
 import { BugFilters } from '@/components/BugFilters';
+import { AddBugModal } from '@/components/AddBugModal';
+import { RefreshButton } from '@/components/RefreshButton';
 import { Suspense } from 'react';
 
 const PAGE_SIZE = 20;
@@ -59,9 +61,15 @@ export default async function DashboardPage({
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Bug Reports</h2>
-          <p className="mt-1 text-sm text-gray-500">{count ?? 0} total reports</p>
+        <div className="flex items-center gap-3">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Bug Reports</h2>
+            <p className="mt-1 text-sm text-gray-500">{count ?? 0} total reports</p>
+          </div>
+          <div className="flex items-center gap-2 self-start pt-1">
+            <RefreshButton />
+            <AddBugModal projects={projects} />
+          </div>
         </div>
         <Suspense>
           <BugFilters projects={projects} />
