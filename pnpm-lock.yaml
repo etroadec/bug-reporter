@@ -107,17 +107,17 @@ importers:
         specifier: ^2.49.0
         version: 2.98.0
       expo-application:
-        specifier: '>=5'
-        version: 55.0.8(expo@55.0.4)
+        specifier: '>=5 <8'
+        version: 7.0.8(expo@55.0.4)
       expo-device:
-        specifier: '>=6'
-        version: 55.0.9(expo@55.0.4)
+        specifier: '>=6 <9'
+        version: 8.0.10(expo@55.0.4)
       expo-network:
-        specifier: '>=6'
-        version: 55.0.8(expo@55.0.4)(react@19.2.4)
+        specifier: '>=6 <9'
+        version: 8.0.8(expo@55.0.4)(react@19.2.4)
       expo-sensors:
-        specifier: '>=13'
-        version: 55.0.8(expo@55.0.4)(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))
+        specifier: '>=13 <17'
+        version: 15.0.8(expo@55.0.4)(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))
       react:
         specifier: '>=18'
         version: 19.2.4
@@ -125,10 +125,10 @@ importers:
         specifier: '>=0.72'
         version: 0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4)
       react-native-view-shot:
-        specifier: '>=3'
+        specifier: '>=3 <5'
         version: 4.0.3(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))(react@19.2.4)
       react-native-webview:
-        specifier: '>=13'
+        specifier: '>=13 <14'
         version: 13.16.1(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))(react@19.2.4)
     devDependencies:
       '@types/react':
@@ -1750,8 +1750,8 @@ packages:
     resolution: {integrity: sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==}
     engines: {node: '>=6'}
 
-  expo-application@55.0.8:
-    resolution: {integrity: sha512-PeZk4Zj8LlzRcRtK3J4ouSPBoi9lroYsRbbz/0HEvx+uB6HIaM1qfzgpcctvjkdJJfnidBQNyieW5BVO/qUQ6w==}
+  expo-application@7.0.8:
+    resolution: {integrity: sha512-qFGyxk7VJbrNOQWBbE09XUuGuvkOgFS9QfToaK2FdagM2aQ+x3CvGV2DuVgl/l4ZxPgIf3b/MNh9xHpwSwn74Q==}
     peerDependencies:
       expo: '*'
 
@@ -1768,8 +1768,8 @@ packages:
       expo: '*'
       react-native: '*'
 
-  expo-device@55.0.9:
-    resolution: {integrity: sha512-BzeuL7lwg2jh/tU+HTJ5dxygB1tpfgThaguPPH86K0ujcj/4RBkC27i/i7nhSoWvL1pQIgUqL0L7WTtjcS9t/w==}
+  expo-device@8.0.10:
+    resolution: {integrity: sha512-jd5BxjaF7382JkDMaC+P04aXXknB2UhWaVx5WiQKA05ugm/8GH5uaz9P9ckWdMKZGQVVEOC8MHaUADoT26KmFA==}
     peerDependencies:
       expo: '*'
 
@@ -1802,14 +1802,14 @@ packages:
       react: '*'
       react-native: '*'
 
-  expo-network@55.0.8:
-    resolution: {integrity: sha512-IXxwFq5B2OImc6BvHHGN9QOCYfMk3wPnbBL+NiyBFqy+g2LsdnGzWLA2HXD8+1Ngdvi7PwckQO+q6WKHLRx4Vw==}
+  expo-network@8.0.8:
+    resolution: {integrity: sha512-dgrL8UHAmWofqeY4UEjWskCl/RoQAM0DG6PZR8xz2WZt+6aQEboQgFRXowCfhbKZ71d16sNuKXtwBEsp2DtdNw==}
     peerDependencies:
       expo: '*'
       react: '*'
 
-  expo-sensors@55.0.8:
-    resolution: {integrity: sha512-aYDw/IBqJtWQgCIJh12oyj5N4ldT88Aa0V/Vag88xG8K2hOQuM2SLGeNlxGRFRtgLJ4m7pzXhQW7CJRj6p1uHQ==}
+  expo-sensors@15.0.8:
+    resolution: {integrity: sha512-ttibOSCYjFAMIfjV+vVukO1v7GKlbcPRfxcRqbTaSMGneewDwVSXbGFImY530fj1BR3mWq4n9jHnuDp8tAEY9g==}
     peerDependencies:
       expo: '*'
       react-native: '*'
@@ -5032,7 +5032,7 @@ snapshots:
 
   event-target-shim@5.0.1: {}
 
-  expo-application@55.0.8(expo@55.0.4):
+  expo-application@7.0.8(expo@55.0.4):
     dependencies:
       expo: 55.0.4(@babel/core@7.29.0)(@expo/dom-webview@55.0.3)(react-dom@19.2.4(react@19.2.4))(react-native-webview@13.16.1(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))(react@19.2.4))(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
 
@@ -5057,7 +5057,7 @@ snapshots:
       - supports-color
       - typescript
 
-  expo-device@55.0.9(expo@55.0.4):
+  expo-device@8.0.10(expo@55.0.4):
     dependencies:
       expo: 55.0.4(@babel/core@7.29.0)(@expo/dom-webview@55.0.3)(react-dom@19.2.4(react@19.2.4))(react-native-webview@13.16.1(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))(react@19.2.4))(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
       ua-parser-js: 0.7.41
@@ -5095,12 +5095,12 @@ snapshots:
       react: 19.2.4
       react-native: 0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4)
 
-  expo-network@55.0.8(expo@55.0.4)(react@19.2.4):
+  expo-network@8.0.8(expo@55.0.4)(react@19.2.4):
     dependencies:
       expo: 55.0.4(@babel/core@7.29.0)(@expo/dom-webview@55.0.3)(react-dom@19.2.4(react@19.2.4))(react-native-webview@13.16.1(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))(react@19.2.4))(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
       react: 19.2.4
 
-  expo-sensors@55.0.8(expo@55.0.4)(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4)):
+  expo-sensors@15.0.8(expo@55.0.4)(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4)):
     dependencies:
       expo: 55.0.4(@babel/core@7.29.0)(@expo/dom-webview@55.0.3)(react-dom@19.2.4(react@19.2.4))(react-native-webview@13.16.1(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))(react@19.2.4))(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
       invariant: 2.2.4
