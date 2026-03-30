@@ -1,24 +1,24 @@
 import { useCallback } from 'react';
-import { captureRef } from 'react-native-view-shot';
+import { captureScreen } from 'react-native-view-shot';
 import { createClient } from '@supabase/supabase-js';
 import { useBugReporter } from './useBugReporter';
 import { SCREENSHOT_QUALITY, SCREENSHOT_FORMAT } from '../constants';
 import { base64ToArrayBuffer } from '../utils/base64';
 
 export function useScreenCapture() {
-  const { viewRef, config } = useBugReporter();
+  const { config } = useBugReporter();
 
   const captureAndUpload = useCallback(async (): Promise<{ uri: string; url: string } | null> => {
     try {
-      if (!viewRef.current) return null;
-
-      // Capture as both URI (for preview) and base64 (for upload)
-      const uri = await captureRef(viewRef.current, {
+      // Use captureScreen to capture the actual displayed screen pixels
+      // instead of captureRef which captures the view hierarchy and can
+      // show the wrong screen in stack navigators
+      const uri = await captureScreen({
         format: SCREENSHOT_FORMAT,
         quality: SCREENSHOT_QUALITY,
       });
 
-      const base64 = await captureRef(viewRef.current, {
+      const base64 = await captureScreen({
         format: SCREENSHOT_FORMAT,
         quality: SCREENSHOT_QUALITY,
         result: 'base64',
@@ -45,7 +45,7 @@ export function useScreenCapture() {
     } catch {
       return null;
     }
-  }, [viewRef, config]);
+  }, [config]);
 
   return { captureAndUpload };
 }

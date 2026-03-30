@@ -35,7 +35,8 @@ export default async function DashboardPage({
     query = query.eq('project_id', params.project);
   }
   if (params.status && params.status !== 'all') {
-    query = query.eq('status', params.status);
+    const statuses = params.status.split(',');
+    query = statuses.length > 1 ? query.in('status', statuses) : query.eq('status', statuses[0]);
   }
   if (params.category && params.category !== 'all') {
     query = query.eq('category', params.category);

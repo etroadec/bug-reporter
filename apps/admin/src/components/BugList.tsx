@@ -6,7 +6,7 @@ import { StatusBadge } from './StatusBadge';
 import { SeverityBadge } from './SeverityBadge';
 import type { BugReport } from '@/lib/supabase';
 
-const STATUSES = ['open', 'in_progress', 'resolved', 'closed'];
+const STATUSES = ['open', 'in_progress', 'resolved', 'test', 'closed'];
 
 export function BugList({ bugs }: { bugs: BugReport[] }) {
   const router = useRouter();
@@ -64,7 +64,7 @@ export function BugList({ bugs }: { bugs: BugReport[] }) {
                   >
                     {STATUSES.map((s) => (
                       <option key={s} value={s}>
-                        {s === 'in_progress' ? 'In Progress' : s.charAt(0).toUpperCase() + s.slice(1)}
+                        {s === 'in_progress' ? 'In Progress' : s === 'test' ? 'Test' : s.charAt(0).toUpperCase() + s.slice(1)}
                       </option>
                     ))}
                   </select>

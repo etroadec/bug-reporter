@@ -4,7 +4,7 @@ type ViewStyleProp = ViewStyle;
 
 export type BugCategory = 'Bug' | 'Crash' | 'UI' | 'Performance' | 'Feature Request' | 'Other';
 export type BugSeverity = 'low' | 'medium' | 'high' | 'critical';
-export type BugStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
+export type BugStatus = 'open' | 'in_progress' | 'resolved' | 'test' | 'closed';
 export type SupportedLocale = 'en' | 'fr';
 
 export type FeatureCategory = 'UI/UX' | 'Performance' | 'New Feature' | 'Integration' | 'Improvement' | 'Other';
@@ -89,6 +89,7 @@ export interface Translations {
   severityMedium: string;
   severityHigh: string;
   severityCritical: string;
+  addImage: string;
   featureBoard: string;
   suggestFeature: string;
 }

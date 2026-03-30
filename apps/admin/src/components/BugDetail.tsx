@@ -6,16 +6,24 @@ import type { BugReport } from '@/lib/supabase';
 import { StatusBadge } from './StatusBadge';
 import { SeverityBadge } from './SeverityBadge';
 import { ScreenshotViewer } from './ScreenshotViewer';
+import { BugComments } from './BugComments';
 
-const STATUSES = ['open', 'in_progress', 'resolved', 'closed'];
+const STATUSES = ['open', 'in_progress', 'resolved', 'test', 'closed'];
 const CATEGORIES = ['Bug', 'Crash', 'UI', 'Performance', 'Feature Request', 'Other'];
 const SEVERITIES = ['low', 'medium', 'high', 'critical'];
 
-export function BugDetail({ bug }: { bug: BugReport }) {
+interface BugDetailProps {
+  bug: BugReport;
+  prevId?: string | null;
+  nextId?: string | null;
+  filterQs?: string;
+}
+
+export function BugDetail({ bug, prevId, nextId, filterQs }: BugDetailProps) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState(bug.status);
-  const [notes, setNotes] = useState(bug.notes ?? '');
+  const [notes] = useState(bug.notes ?? '');
   const [assignedTo, setAssignedTo] = useState(bug.assigned_to ?? '');
   const [description, setDescription] = useState(bug.description);
   const [category, setCategory] = useState(bug.category);
@@ -56,7 +64,6 @@ export function BugDetail({ bug }: { bug: BugReport }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           status,
-          notes: notes || null,
           assigned_to: assignedTo || null,
           description,
           category,
@@ -95,9 +102,29 @@ export function BugDetail({ bug }: { bug: BugReport }) {
             Reported {new Date(bug.created_at).toLocaleString()}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <StatusBadge status={status} />
-          <SeverityBadge severity={severity} />
+        <div className="flex flex-col items-end gap-2">
+          <div className="flex items-center gap-2">
+            <StatusBadge status={status} />
+            <SeverityBadge severity={severity} />
+          </div>
+          <div className="flex items-center gap-2">
+            {prevId && (
+              <button
+                onClick={() => router.push(`/bugs/${prevId}${filterQs ? `?${filterQs}` : ''}`)}
+                className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                &larr; Previous
+              </button>
+            )}
+            {nextId && (
+              <button
+                onClick={() => router.push(`/bugs/${nextId}${filterQs ? `?${filterQs}` : ''}`)}
+                className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Next &rarr;
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -144,6 +171,9 @@ export function BugDetail({ bug }: { bug: BugReport }) {
               </pre>
             </div>
           )}
+
+          {/* Comments */}
+          <BugComments bugId={bug.id} />
         </div>
 
         {/* Sidebar */}
@@ -186,7 +216,7 @@ export function BugDetail({ bug }: { bug: BugReport }) {
                 >
                   {STATUSES.map((s) => (
                     <option key={s} value={s}>
-                      {s === 'in_progress' ? 'In Progress' : s.charAt(0).toUpperCase() + s.slice(1)}
+                      {s === 'in_progress' ? 'In Progress' : s === 'test' ? 'Test' : s.charAt(0).toUpperCase() + s.slice(1)}
                     </option>
                   ))}
                 </select>
@@ -201,16 +231,12 @@ export function BugDetail({ bug }: { bug: BugReport }) {
                   className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Notes</label>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  rows={4}
-                  placeholder="Add internal notes..."
-                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                />
-              </div>
+              {notes && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Legacy Notes</label>
+                  <p className="mt-1 whitespace-pre-wrap rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600">{notes}</p>
+                </div>
+              )}
               <button
                 onClick={handleSave}
                 disabled={saving}

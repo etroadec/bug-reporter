@@ -22,6 +22,10 @@ export function AddBugModal({ projects }: { projects: string[] }) {
     reported_by: '',
     assigned_to: '',
     notes: '',
+    device_brand: '',
+    device_model: '',
+    device_os: '',
+    device_os_version: '',
   });
 
   function reset() {
@@ -33,6 +37,10 @@ export function AddBugModal({ projects }: { projects: string[] }) {
       reported_by: '',
       assigned_to: '',
       notes: '',
+      device_brand: '',
+      device_model: '',
+      device_os: '',
+      device_os_version: '',
     });
     setPreview(null);
     setError('');

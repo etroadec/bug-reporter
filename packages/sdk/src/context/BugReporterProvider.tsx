@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { captureRef } from 'react-native-view-shot';
+import { captureScreen } from 'react-native-view-shot';
 import { createClient } from '@supabase/supabase-js';
 import { BugReporterContext } from './BugReporterContext';
 import type { ScreenshotData } from './BugReporterContext';
@@ -34,16 +34,15 @@ export function BugReporterProvider({ config, children }: Props) {
   const closeBoard = useCallback(() => setIsBoardVisible(false), []);
 
   // Capture screenshot BEFORE opening modal to avoid iOS crash.
-  // drawViewHierarchyInRect:afterScreenUpdates: crashes when the view hierarchy
-  // is in transition (modal animating). Capturing first keeps the hierarchy stable.
+  // Uses captureScreen to capture actual displayed pixels instead of view hierarchy,
+  // which avoids capturing the wrong screen in stack navigators.
   const captureAndOpenModal = useCallback(async () => {
     try {
-      if (viewRef.current) {
-        const uri = await captureRef(viewRef.current, {
+        const uri = await captureScreen({
           format: SCREENSHOT_FORMAT,
           quality: SCREENSHOT_QUALITY,
         });
-        const base64 = await captureRef(viewRef.current, {
+        const base64 = await captureScreen({
           format: SCREENSHOT_FORMAT,
           quality: SCREENSHOT_QUALITY,
           result: 'base64',
@@ -65,7 +64,6 @@ export function BugReporterProvider({ config, children }: Props) {
           const { data } = supabase.storage.from('screenshots').getPublicUrl(fileName);
           setPendingScreenshot({ uri, url: data.publicUrl });
         }
-      }
     } catch {
       // Screenshot failed — open modal without screenshot
     }

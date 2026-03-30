@@ -13,11 +13,13 @@ import {
   StatusBar,
 } from 'react-native';
 import { createClient } from '@supabase/supabase-js';
+import * as ImagePicker from 'expo-image-picker';
 import { useBugReporter } from '../hooks/useBugReporter';
 import { useScreenCapture } from '../hooks/useScreenCapture';
 import { useDeviceInfo } from '../hooks/useDeviceInfo';
 import { ScreenshotPreview } from './ScreenshotPreview';
 import { DEFAULT_CATEGORIES, SEVERITIES } from '../constants';
+import { base64ToArrayBuffer } from '../utils/base64';
 import type { BugCategory, BugSeverity, BugReportPayload } from '../types';
 
 export function ReportModal() {
@@ -58,6 +60,40 @@ export function ReportModal() {
       setIsSubmitting(false);
     }
   }, [isModalVisible]);
+
+  const handlePickImage = useCallback(async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      quality: 0.7,
+      base64: true,
+    });
+
+    if (result.canceled || !result.assets[0]) return;
+
+    const asset = result.assets[0];
+    setScreenshotUri(asset.uri);
+
+    // Upload to Supabase Storage if base64 is available
+    if (asset.base64) {
+      try {
+        const supabase = createClient(config.supabaseUrl, config.supabaseAnonKey);
+        const uniqueId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+        const fileName = `${config.projectId}/${uniqueId}.jpg`;
+        const arrayBuffer = base64ToArrayBuffer(asset.base64);
+
+        const { error } = await supabase.storage
+          .from('screenshots')
+          .upload(fileName, arrayBuffer, { contentType: 'image/jpeg' });
+
+        if (!error) {
+          const { data } = supabase.storage.from('screenshots').getPublicUrl(fileName);
+          setScreenshotUrl(data.publicUrl);
+        }
+      } catch {
+        // Upload failed, URI still available for preview
+      }
+    }
+  }, [config]);
 
   const handleSubmit = useCallback(async () => {
     if (!description.trim()) return;
@@ -126,12 +162,15 @@ export function ReportModal() {
 
         <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent} keyboardShouldPersistTaps="handled">
           {/* Screenshot */}
-          {screenshotUri && (
-            <View style={styles.section}>
-              <Text style={styles.label}>{translations.screenshot}</Text>
-              <ScreenshotPreview uri={screenshotUri} onRemove={() => setScreenshotUri(null)} removeLabel={translations.removeScreenshot} />
-            </View>
-          )}
+          <View style={styles.section}>
+            <Text style={styles.label}>{translations.screenshot}</Text>
+            {screenshotUri ? (
+              <ScreenshotPreview uri={screenshotUri} onRemove={() => { setScreenshotUri(null); setScreenshotUrl(null); }} removeLabel={translations.removeScreenshot} />
+            ) : null}
+            <TouchableOpacity style={styles.addImageButton} onPress={handlePickImage}>
+              <Text style={styles.addImageText}>{translations.addImage}</Text>
+            </TouchableOpacity>
+          </View>
 
           {/* Description */}
           <View style={styles.section}>
@@ -283,5 +322,20 @@ const styles = StyleSheet.create({
   },
   chipTextActive: {
     color: '#fff',
+  },
+  addImageButton: {
+    marginTop: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#6366f1',
+    borderStyle: 'dashed',
+    alignItems: 'center',
+  },
+  addImageText: {
+    fontSize: 14,
+    color: '#6366f1',
+    fontWeight: '500',
   },
 });

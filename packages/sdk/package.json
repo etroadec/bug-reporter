@@ -23,6 +23,7 @@
   "peerDependencies": {
     "expo-application": ">=5 <8",
     "expo-device": ">=6 <9",
+    "expo-image-picker": ">=15 <17",
     "expo-network": ">=6 <9",
     "expo-sensors": ">=13 <17",
     "react": ">=18",
@@ -36,6 +37,7 @@
   "devDependencies": {
     "@types/react": "^18",
     "@types/react-native": "^0.72",
+    "expo-image-picker": "^55.0.14",
     "typescript": "^5.5.0"
   }
 }

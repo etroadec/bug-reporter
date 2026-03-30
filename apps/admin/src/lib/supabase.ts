@@ -27,6 +27,14 @@ export type BugReport = {
   updated_at: string;
 };
 
+export type BugComment = {
+  id: string;
+  bug_id: string;
+  author: string | null;
+  content: string;
+  created_at: string;
+};
+
 export type FeatureRequest = {
   id: string;
   title: string;
