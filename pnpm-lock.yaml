@@ -107,16 +107,16 @@ importers:
         specifier: ^2.49.0
         version: 2.98.0
       expo-application:
-        specifier: '>=5 <8'
+        specifier: '>=5'
         version: 7.0.8(expo@55.0.4)
       expo-device:
-        specifier: '>=6 <9'
+        specifier: '>=6'
         version: 8.0.10(expo@55.0.4)
       expo-network:
-        specifier: '>=6 <9'
+        specifier: '>=6'
         version: 8.0.8(expo@55.0.4)(react@19.2.4)
       expo-sensors:
-        specifier: '>=13 <17'
+        specifier: '>=13'
         version: 15.0.8(expo@55.0.4)(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))
       react:
         specifier: '>=18'
@@ -125,10 +125,10 @@ importers:
         specifier: '>=0.72'
         version: 0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4)
       react-native-view-shot:
-        specifier: '>=3 <5'
+        specifier: '>=3'
         version: 4.0.3(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))(react@19.2.4)
       react-native-webview:
-        specifier: '>=13 <14'
+        specifier: '>=13'
         version: 13.16.1(react-native@0.84.1(@babel/core@7.29.0)(@types/react@18.3.28)(react@19.2.4))(react@19.2.4)
     devDependencies:
       '@types/react':
