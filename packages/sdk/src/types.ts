@@ -69,6 +69,14 @@ export interface BugReporterConfig {
   userId?: string;
   customData?: Record<string, unknown>;
   featureBoard?: FeatureBoardConfig;
+  /**
+   * Capture automatiquement un screenshot quand la modale est ouverte par
+   * `openModal()`. Par défaut `true` (comportement historique).
+   * Les flux shake / floating button ne sont pas affectés (ils capturent
+   * avant l'ouverture). L'utilisateur peut toujours ajouter une image
+   * manuellement via « Add image ».
+   */
+  captureScreenshotOnOpen?: boolean;
 }
 
 export interface Translations {

@@ -23,7 +23,7 @@ import { base64ToArrayBuffer } from '../utils/base64';
 import type { BugCategory, BugSeverity, BugReportPayload } from '../types';
 
 export function ReportModal() {
-  const { config, translations, isModalVisible, closeModal, pendingScreenshot } = useBugReporter();
+  const { config, translations, isModalVisible, closeModal, pendingScreenshot, autoCaptureOnOpen } = useBugReporter();
   const { captureAndUpload } = useScreenCapture();
   const { getDeviceInfo, getAppInfo, getNetworkInfo } = useDeviceInfo();
 
@@ -42,7 +42,7 @@ export function ReportModal() {
       if (pendingScreenshot) {
         setScreenshotUri(pendingScreenshot.uri);
         setScreenshotUrl(pendingScreenshot.url || null);
-      } else {
+      } else if (autoCaptureOnOpen) {
         captureAndUpload().then((result) => {
           if (result) {
             setScreenshotUri(result.uri);

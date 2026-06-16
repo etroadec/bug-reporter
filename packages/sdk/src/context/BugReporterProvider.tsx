@@ -22,13 +22,19 @@ export function BugReporterProvider({ config, children }: Props) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isBoardVisible, setIsBoardVisible] = useState(false);
   const [pendingScreenshot, setPendingScreenshot] = useState<ScreenshotData | null>(null);
+  // Override par appel pour la capture auto (prioritaire sur la config).
+  const [screenshotOverride, setScreenshotOverride] = useState<boolean | undefined>(undefined);
   const viewRef = useRef<View>(null);
   const translations = getTranslations(config.locale);
 
-  const openModal = useCallback(() => setIsModalVisible(true), []);
+  const openModal = useCallback((options?: { screenshot?: boolean }) => {
+    setScreenshotOverride(options?.screenshot);
+    setIsModalVisible(true);
+  }, []);
   const closeModal = useCallback(() => {
     setIsModalVisible(false);
     setPendingScreenshot(null);
+    setScreenshotOverride(undefined);
   }, []);
   const openBoard = useCallback(() => setIsBoardVisible(true), []);
   const closeBoard = useCallback(() => setIsBoardVisible(false), []);
@@ -70,6 +76,9 @@ export function BugReporterProvider({ config, children }: Props) {
     setIsModalVisible(true);
   }, [config]);
 
+  // Priorité : override par appel > config.captureScreenshotOnOpen > true.
+  const autoCaptureOnOpen = screenshotOverride ?? config.captureScreenshotOnOpen ?? true;
+
   const shakeEnabled = config.enableShake ?? !__DEV__;
 
   useShakeDetection({
@@ -80,7 +89,7 @@ export function BugReporterProvider({ config, children }: Props) {
 
   return (
     <BugReporterContext.Provider
-      value={{ config, translations, isModalVisible, openModal, closeModal, isBoardVisible, openBoard, closeBoard, viewRef, pendingScreenshot }}
+      value={{ config, translations, isModalVisible, openModal, closeModal, autoCaptureOnOpen, isBoardVisible, openBoard, closeBoard, viewRef, pendingScreenshot }}
     >
       <View ref={viewRef} collapsable={false} style={styles.container}>
         {children}

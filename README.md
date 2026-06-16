@@ -136,6 +136,7 @@ npx expo install expo-sensors react-native-view-shot expo-device expo-applicatio
 | `enableShake` | `boolean` | `!__DEV__` | Activer la detection de secousse |
 | `shakeThreshold` | `number` | `1.8` | Seuil de sensibilite du shake |
 | `floatingButton` | `boolean` | `true` | Afficher le bouton flottant |
+| `captureScreenshotOnOpen` | `boolean` | `true` | Capture auto d'un screenshot a l'ouverture via `openModal()` (le shake/floating button ne sont pas affectes) |
 | `categories` | `BugCategory[]` | `['Bug', 'Crash', ...]` | Categories disponibles |
 | `defaultCategory` | `BugCategory` | `'Bug'` | Categorie par defaut |
 | `currentScreen` | `string` | — | Nom de l'ecran actuel |
@@ -170,6 +171,9 @@ Hook pour controler le reporter programmatiquement :
 
 ```tsx
 const { openModal, closeModal, isModalVisible } = useBugReporter();
+
+// Desactiver la capture auto pour cet appel precis (prioritaire sur la config)
+openModal({ screenshot: false });
 ```
 
 ## Board public

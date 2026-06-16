@@ -12,8 +12,15 @@ export interface BugReporterContextValue {
   config: BugReporterConfig;
   translations: Translations;
   isModalVisible: boolean;
-  openModal: () => void;
+  /**
+   * Ouvre la modale de report.
+   * @param options.screenshot Force (ou désactive) la capture auto pour cet appel,
+   *   prioritaire sur `config.captureScreenshotOnOpen`.
+   */
+  openModal: (options?: { screenshot?: boolean }) => void;
   closeModal: () => void;
+  /** Capture auto résolue pour l'ouverture courante (override > config > true). */
+  autoCaptureOnOpen: boolean;
   isBoardVisible: boolean;
   openBoard: () => void;
   closeBoard: () => void;
