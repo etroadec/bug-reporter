@@ -67,8 +67,9 @@ export function BugReporterProvider({ config, children }: Props) {
         if (error) {
           setPendingScreenshot({ uri, url: '' });
         } else {
-          const { data } = supabase.storage.from('screenshots').getPublicUrl(fileName);
-          setPendingScreenshot({ uri, url: data.publicUrl });
+          // The screenshots bucket is private: store the object path (not a public
+          // URL). The back-office resolves it to a signed URL on display.
+          setPendingScreenshot({ uri, url: fileName });
         }
     } catch {
       // Screenshot failed — open modal without screenshot

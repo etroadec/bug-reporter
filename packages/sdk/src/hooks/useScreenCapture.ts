@@ -40,8 +40,9 @@ export function useScreenCapture() {
         return { uri, url: '' };
       }
 
-      const { data } = supabase.storage.from('screenshots').getPublicUrl(fileName);
-      return { uri, url: data.publicUrl };
+      // The screenshots bucket is private: store the object path (not a public
+      // URL). The back-office resolves it to a short-lived signed URL on display.
+      return { uri, url: fileName };
     } catch {
       return null;
     }

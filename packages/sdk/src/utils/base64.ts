@@ -19,10 +19,13 @@ export function base64ToArrayBuffer(base64: string): ArrayBuffer {
 
   let p = 0;
   for (let i = 0; i < len; i += 4) {
+    // In the final group, padding chars were stripped, so clean[i+2]/clean[i+3]
+    // may be missing. Treat missing sextets as 0 bits — using indexOf's -1 here
+    // would OR every bit to 1 and corrupt the last 1-2 bytes (JPEG EOI marker).
     const a = chars.indexOf(clean[i]);
     const b = chars.indexOf(clean[i + 1]);
-    const c = chars.indexOf(clean[i + 2]);
-    const d = chars.indexOf(clean[i + 3]);
+    const c = i + 2 < len ? chars.indexOf(clean[i + 2]) : 0;
+    const d = i + 3 < len ? chars.indexOf(clean[i + 3]) : 0;
     const bits = (a << 18) | (b << 12) | (c << 6) | d;
     bytes[p++] = (bits >> 16) & 0xff;
     if (p < byteLen) bytes[p++] = (bits >> 8) & 0xff;

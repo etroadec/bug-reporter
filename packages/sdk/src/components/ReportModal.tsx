@@ -86,8 +86,9 @@ export function ReportModal() {
           .upload(fileName, arrayBuffer, { contentType: 'image/jpeg' });
 
         if (!error) {
-          const { data } = supabase.storage.from('screenshots').getPublicUrl(fileName);
-          setScreenshotUrl(data.publicUrl);
+          // The screenshots bucket is private: store the object path (not a public
+          // URL). The back-office resolves it to a signed URL on display.
+          setScreenshotUrl(fileName);
         }
       } catch {
         // Upload failed, URI still available for preview
