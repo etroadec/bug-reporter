@@ -33,16 +33,16 @@ export function VoteButton({ featureId, voteCount }: { featureId: string; voteCo
     setLoading(true);
 
     if (hasVoted) {
-      const { error } = await supabase
-        .from('feature_votes')
-        .delete()
-        .eq('feature_request_id', featureId)
-        .eq('voter_id', voterId);
+      const { error } = await supabase.rpc('remove_vote', {
+        p_feature_request_id: featureId,
+        p_voter_id: voterId,
+      });
       if (!error) setHasVoted(false);
     } else {
-      const { error } = await supabase
-        .from('feature_votes')
-        .insert({ feature_request_id: featureId, voter_id: voterId });
+      const { error } = await supabase.rpc('cast_vote', {
+        p_feature_request_id: featureId,
+        p_voter_id: voterId,
+      });
       if (!error) setHasVoted(true);
     }
 

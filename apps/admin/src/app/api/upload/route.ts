@@ -21,7 +21,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  const { data } = supabase.storage.from('screenshots').getPublicUrl(fileName);
+  // The bucket is private: persist the object path and return a short-lived
+  // signed URL so the caller can display the freshly uploaded image.
+  const { data: signed } = await supabase.storage
+    .from('screenshots')
+    .createSignedUrl(fileName, 60 * 60);
 
-  return NextResponse.json({ url: data.publicUrl });
+  return NextResponse.json({ path: fileName, url: signed?.signedUrl ?? null });
 }

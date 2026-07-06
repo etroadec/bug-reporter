@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { createSupabaseAdmin } from '@/lib/supabase';
+import { createSupabaseAdmin, signScreenshotUrl } from '@/lib/supabase';
 import { BugDetail } from '@/components/BugDetail';
 
 export default async function BugPage({
@@ -15,6 +15,9 @@ export default async function BugPage({
   const { data: bug } = await supabase.from('bug_reports').select('*').eq('id', id).single();
 
   if (!bug) notFound();
+
+  // Bucket is private: sign the stored screenshot reference for display.
+  const screenshotDisplayUrl = await signScreenshotUrl(supabase, bug.screenshot_url);
 
   // Fetch ordered bug IDs with same filters to determine prev/next
   let query = supabase
@@ -45,5 +48,5 @@ export default async function BugPage({
   if (filters.severity) filterParams.set('severity', filters.severity);
   const filterQs = filterParams.toString();
 
-  return <BugDetail bug={bug} prevId={prevId} nextId={nextId} filterQs={filterQs} />;
+  return <BugDetail bug={bug} screenshotDisplayUrl={screenshotDisplayUrl} prevId={prevId} nextId={nextId} filterQs={filterQs} />;
 }

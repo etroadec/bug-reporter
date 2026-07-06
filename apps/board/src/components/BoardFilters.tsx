@@ -29,8 +29,10 @@ export function BoardFilters({ projectId }: { projectId: string }) {
       } else {
         params.set(key, value);
       }
-      const voterId = searchParams.get('voter_id');
-      if (voterId) params.set('voter_id', voterId);
+      // Never propagate voter_id into navigation URLs: it is an app-provided
+      // identifier (historically an email) and voting reads it from localStorage,
+      // not the URL. Keeping it out avoids leaking it into shared/copied links.
+      params.delete('voter_id');
       router.push(`/${projectId}?${params.toString()}`);
     },
     [router, searchParams, projectId]

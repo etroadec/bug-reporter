@@ -20,6 +20,7 @@ import { useDeviceInfo } from '../hooks/useDeviceInfo';
 import { ScreenshotPreview } from './ScreenshotPreview';
 import { DEFAULT_CATEGORIES, SEVERITIES } from '../constants';
 import { base64ToArrayBuffer } from '../utils/base64';
+import { toOpaqueId } from '../utils/opaqueId';
 import type { BugCategory, BugSeverity, BugReportPayload } from '../types';
 
 export function ReportModal() {
@@ -86,8 +87,9 @@ export function ReportModal() {
           .upload(fileName, arrayBuffer, { contentType: 'image/jpeg' });
 
         if (!error) {
-          const { data } = supabase.storage.from('screenshots').getPublicUrl(fileName);
-          setScreenshotUrl(data.publicUrl);
+          // The screenshots bucket is private: store the object path (not a public
+          // URL). The back-office resolves it to a signed URL on display.
+          setScreenshotUrl(fileName);
         }
       } catch {
         // Upload failed, URI still available for preview
@@ -122,7 +124,8 @@ export function ReportModal() {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         custom_data: config.customData,
         project_id: config.projectId,
-        reported_by: config.userId,
+        // De-identify before sending: never transmit a raw identifier (e.g. email).
+        reported_by: toOpaqueId(config.userId),
       };
 
       const supabase = createClient(config.supabaseUrl, config.supabaseAnonKey);
