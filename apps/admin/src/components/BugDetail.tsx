@@ -14,12 +14,14 @@ const SEVERITIES = ['low', 'medium', 'high', 'critical'];
 
 interface BugDetailProps {
   bug: BugReport;
+  /** Signed, short-lived URL for displaying the stored screenshot (private bucket). */
+  screenshotDisplayUrl?: string | null;
   prevId?: string | null;
   nextId?: string | null;
   filterQs?: string;
 }
 
-export function BugDetail({ bug, prevId, nextId, filterQs }: BugDetailProps) {
+export function BugDetail({ bug, screenshotDisplayUrl, prevId, nextId, filterQs }: BugDetailProps) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState(bug.status);
@@ -28,7 +30,9 @@ export function BugDetail({ bug, prevId, nextId, filterQs }: BugDetailProps) {
   const [description, setDescription] = useState(bug.description);
   const [category, setCategory] = useState(bug.category);
   const [severity, setSeverity] = useState(bug.severity ?? '');
-  const [screenshotUrl, setScreenshotUrl] = useState(bug.screenshot_url);
+  // What we persist (bare object path or legacy URL) vs. what we display (signed URL).
+  const [storedScreenshot, setStoredScreenshot] = useState(bug.screenshot_url);
+  const [displayUrl, setDisplayUrl] = useState<string | null>(screenshotDisplayUrl ?? null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -45,7 +49,7 @@ export function BugDetail({ bug, prevId, nextId, filterQs }: BugDetailProps) {
   async function handleSave() {
     setSaving(true);
     try {
-      let newScreenshotUrl = screenshotUrl;
+      let newStoredScreenshot = storedScreenshot;
 
       // Upload new screenshot if one was selected
       const file = fileRef.current?.files?.[0];
@@ -55,7 +59,9 @@ export function BugDetail({ bug, prevId, nextId, filterQs }: BugDetailProps) {
         const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd });
         const uploadData = await uploadRes.json();
         if (uploadRes.ok) {
-          newScreenshotUrl = uploadData.url;
+          // Persist the object path; display the returned signed URL.
+          newStoredScreenshot = uploadData.path;
+          setDisplayUrl(uploadData.url ?? null);
         }
       }
 
@@ -68,9 +74,10 @@ export function BugDetail({ bug, prevId, nextId, filterQs }: BugDetailProps) {
           description,
           category,
           severity: severity || null,
-          screenshot_url: newScreenshotUrl,
+          screenshot_url: newStoredScreenshot,
         }),
       });
+      setStoredScreenshot(newStoredScreenshot);
       router.refresh();
     } finally {
       setSaving(false);
@@ -137,7 +144,7 @@ export function BugDetail({ bug, prevId, nextId, filterQs }: BugDetailProps) {
             {screenshotPreview ? (
               <img src={screenshotPreview} alt="New screenshot" className="max-h-96 rounded-lg border border-gray-200 object-contain" />
             ) : (
-              <ScreenshotViewer url={screenshotUrl} />
+              <ScreenshotViewer url={displayUrl} />
             )}
             <div className="mt-4">
               <label className="block text-sm font-medium text-gray-700">Change screenshot</label>

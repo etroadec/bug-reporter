@@ -82,7 +82,8 @@ export function AddBugModal({ projects }: { projects: string[] }) {
           setError(uploadData.error ?? 'Upload failed');
           return;
         }
-        screenshot_url = uploadData.url;
+        // Persist the object path (bucket is private; display is signed on read).
+        screenshot_url = uploadData.path;
       }
 
       const body: Record<string, string> = { ...form };
