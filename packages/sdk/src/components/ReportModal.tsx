@@ -20,6 +20,7 @@ import { useDeviceInfo } from '../hooks/useDeviceInfo';
 import { ScreenshotPreview } from './ScreenshotPreview';
 import { DEFAULT_CATEGORIES, SEVERITIES } from '../constants';
 import { base64ToArrayBuffer } from '../utils/base64';
+import { toOpaqueId } from '../utils/opaqueId';
 import type { BugCategory, BugSeverity, BugReportPayload } from '../types';
 
 export function ReportModal() {
@@ -123,7 +124,8 @@ export function ReportModal() {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         custom_data: config.customData,
         project_id: config.projectId,
-        reported_by: config.userId,
+        // De-identify before sending: never transmit a raw identifier (e.g. email).
+        reported_by: toOpaqueId(config.userId),
       };
 
       const supabase = createClient(config.supabaseUrl, config.supabaseAnonKey);
