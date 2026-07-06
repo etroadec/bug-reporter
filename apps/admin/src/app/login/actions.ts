@@ -1,6 +1,5 @@
 'use server';
 
-import { headers } from 'next/headers';
 import { createServerSupabase } from '@/lib/supabase/server';
 import { isAllowedAdmin } from '@/lib/auth';
 
@@ -19,17 +18,20 @@ export async function sendMagicLink(email: string): Promise<{ ok: boolean; error
     return { ok: false, error: "Cette adresse n'est pas autorisée à accéder au portail." };
   }
 
-  const h = await headers();
-  const host = h.get('x-forwarded-host') ?? h.get('host');
-  const proto = h.get('x-forwarded-proto') ?? 'https';
-  const origin = `${proto}://${host}`;
+  // Trusted, server-configured base URL. NEVER derive the redirect origin from
+  // request headers (Host / X-Forwarded-Host are client-controllable and would
+  // allow redirecting a valid magic link to an attacker's domain).
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '');
+  if (!siteUrl) {
+    return { ok: false, error: 'Configuration manquante côté serveur (NEXT_PUBLIC_SITE_URL).' };
+  }
 
   const supabase = await createServerSupabase();
   const { error } = await supabase.auth.signInWithOtp({
     email: normalized,
     options: {
       shouldCreateUser: true,
-      emailRedirectTo: `${origin}/auth/callback`,
+      emailRedirectTo: `${siteUrl}/auth/callback`,
     },
   });
 
