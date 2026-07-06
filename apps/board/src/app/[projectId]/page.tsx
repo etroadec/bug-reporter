@@ -17,9 +17,11 @@ export default async function BoardPage({
   const sort = sp.sort ?? 'votes';
   const orderColumn = sort === 'newest' ? 'created_at' : 'vote_count';
 
+  // Select only the non-PII columns the board needs. `submitted_by` (an
+  // app-provided identifier, historically an email) is deliberately excluded.
   let query = supabase
     .from('feature_requests')
-    .select('*')
+    .select('id, title, description, category, status, vote_count, admin_response, created_at')
     .eq('project_id', projectId)
     .order(orderColumn, { ascending: false });
 
@@ -27,8 +29,19 @@ export default async function BoardPage({
     query = query.eq('status', sp.status);
   }
 
-  const { data: features } = await query;
+  const { data: features, error } = await query;
   const count = (features ?? []).length;
+
+  if (error) {
+    return (
+      <div className="rounded-xl border border-red-200 bg-red-50 p-8 text-center">
+        <p className="text-sm font-medium text-red-700">
+          Impossible de charger les suggestions pour le moment.
+        </p>
+        <p className="mt-1 text-xs text-red-500">Réessayez dans un instant.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
